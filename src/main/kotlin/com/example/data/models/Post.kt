@@ -1,0 +1,18 @@
+package com.example.data.models
+
+import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.types.ObjectId
+
+data class Post(
+    @BsonId
+    val id: String = ObjectId().toString(),
+    val userId: String,
+    val title: String,
+    val description: String,
+    val postImageUrl: String,
+    val members: List<String>,
+    val available: Int,
+    val limit: Int,
+    val isEvent: Boolean,
+    val isOffer: Boolean
+)

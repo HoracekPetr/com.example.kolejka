@@ -1,7 +1,11 @@
 package com.example
 
+import com.example.di.mainModule
 import io.ktor.application.*
 import com.example.plugins.*
+import org.koin.ktor.ext.Koin
+import org.koin.ktor.ext.modules
+import org.koin.logger.SLF4JLogger
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args)
@@ -13,4 +17,7 @@ fun Application.module() {
     configureMonitoring()
     configureHTTP()
     configureSecurity()
+    install(Koin){
+        modules(mainModule)
+    }
 }
