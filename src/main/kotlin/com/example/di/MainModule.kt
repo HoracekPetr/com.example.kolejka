@@ -1,5 +1,7 @@
 package com.example.di
 
+import com.example.data.repositories.post.PostRepository
+import com.example.data.repositories.post.PostRepositoryImpl
 import com.example.data.repositories.user.UserRepository
 import com.example.data.repositories.user.UserRepositoryImpl
 import com.example.util.Constants.DATABASE_NAME
@@ -16,5 +18,9 @@ val mainModule = module {
 
     single<UserRepository> {
         UserRepositoryImpl(get())
+    }
+
+    single<PostRepository> {
+        PostRepositoryImpl(get())
     }
 }

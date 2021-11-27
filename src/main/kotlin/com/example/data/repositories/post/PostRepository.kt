@@ -1,0 +1,17 @@
+package com.example.data.repositories.post
+
+import com.example.data.models.Post
+import com.example.util.Constants.PAGE_SIZE
+
+interface PostRepository {
+
+    suspend fun createPost(post: Post)
+
+    suspend fun getPostsByAll(
+        page: Int = 0,
+        pageSize: Int = PAGE_SIZE
+    ): List<Post>
+
+    suspend fun getPostById(id: String): Post?
+
+}
