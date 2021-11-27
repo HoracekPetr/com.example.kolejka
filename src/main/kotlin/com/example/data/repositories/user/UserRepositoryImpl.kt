@@ -1,12 +1,12 @@
-package com.example.controller.user
+package com.example.data.repositories.user
 
 import com.example.data.models.User
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
 
-class UserControllerImpl(
+class UserRepositoryImpl(
     db: CoroutineDatabase
-): UserController {
+) : UserRepository {
 
     private val users = db.getCollection<User>()
 
@@ -20,5 +20,10 @@ class UserControllerImpl(
 
     override suspend fun getUserByEmail(email: String): User? {
         return users.findOne(User::email eq email)
+    }
+
+    override suspend fun doesPasswordForUserMatch(email: String, password: String): Boolean {
+        val user = getUserByEmail(email)
+        return user?.password == password
     }
 }

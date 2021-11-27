@@ -12,12 +12,12 @@ fun main(args: Array<String>): Unit =
 
 @Suppress("unused") // application.conf references the main function. This annotation prevents the IDE from marking it as unused.
 fun Application.module() {
+    install(Koin){
+        modules(mainModule)
+    }
     configureRouting()
     configureSerialization()
     configureMonitoring()
     configureHTTP()
     configureSecurity()
-    install(Koin){
-        modules(mainModule)
-    }
 }
