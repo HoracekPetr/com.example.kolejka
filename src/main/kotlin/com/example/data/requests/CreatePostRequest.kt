@@ -6,6 +6,7 @@ data class CreatePostRequest(
     val description: String,
     val postImageUrl: String,
     val limit: Int,
+    val members: List<String>,
     val isEvent: Boolean,
     val isOffer: Boolean
 )

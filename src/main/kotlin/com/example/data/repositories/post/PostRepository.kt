@@ -14,4 +14,8 @@ interface PostRepository {
 
     suspend fun getPostById(id: String): Post?
 
+    suspend fun getPostsByMembers(userId: String): List<Post>
+
+    suspend fun getPostsByCreator(userId: String): List<Post>
+
 }

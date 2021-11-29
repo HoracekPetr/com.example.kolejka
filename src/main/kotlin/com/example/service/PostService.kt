@@ -17,10 +17,17 @@ class PostService(
                 postImageUrl = request.postImageUrl,
                 limit = request.limit,
                 available = request.limit,
-                members = emptyList(),
+                members = mutableListOf(request.userId),
                 isEvent = request.isEvent,
                 isOffer = request.isOffer
             )
         )
+    }
+
+    suspend fun getPostsByAll(
+        page: Int = 0,
+        pageSize: Int = 15
+    ): List<Post>{
+        return postRepository.getPostsByAll(page, pageSize)
     }
 }
