@@ -5,9 +5,11 @@ import com.example.data.models.User
 import com.example.data.requests.CreateAccountRequest
 import com.example.data.requests.LoginRequest
 import com.example.data.responses.BasicApiResponse
+import com.example.service.UserService
 import com.example.util.ApiResponseMessages.FIELDS_BLANK
 import com.example.util.ApiResponseMessages.INVALID_CREDENTIALS
 import com.example.util.ApiResponseMessages.USER_ALREADY_EXISTS
+import com.example.util.ValidationEvent
 import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -17,7 +19,7 @@ import io.ktor.http.HttpStatusCode.Companion.OK
 import org.koin.ktor.ext.inject
 
 fun Route.createUserRoute(
-    userRepository: UserRepository
+    userService: UserService
 ) {
 
     route("/api/user/create") {
@@ -27,37 +29,33 @@ fun Route.createUserRoute(
                 return@post
             }
 
-            val userExist = userRepository.getUserByEmail(request.email) != null
-
-            if (userExist) {
+            if (userService.doesUserWithEmailExist(request.email)) {
                 call.respond(
                     BasicApiResponse(USER_ALREADY_EXISTS, false)
                 )
                 return@post
             }
-            if (request.email.isBlank() || request.password.isBlank() || request.username.isBlank()) {
-                call.respond(
-                    BasicApiResponse(FIELDS_BLANK, false)
-                )
-            }
 
-            userRepository.createUser(
-                User(
-                    email = request.email,
-                    username = request.username,
-                    password = request.password,
-                    profileImageURL = ""
-                )
-            )
-            call.respond(
-                OK,
-                BasicApiResponse(successful = true)
-            )
+            when (userService.validateCreateAccountRequest(request)) {
+                is ValidationEvent.EmptyFieldError -> {
+                    call.respond(
+                        BasicApiResponse(FIELDS_BLANK, false)
+                    )
+                }
+
+                is ValidationEvent.Success -> {
+                    userService.createUser(request)
+                    call.respond(
+                        OK,
+                        BasicApiResponse(successful = true)
+                    )
+                }
+            }
         }
     }
 }
 
-fun Route.loginUserRoute(userRepository: UserRepository) {
+fun Route.loginUserRoute(userService: UserService) {
 
     route("/api/user/login") {
         post {
@@ -66,25 +64,25 @@ fun Route.loginUserRoute(userRepository: UserRepository) {
                 return@post
             }
 
-            if (request.email.isBlank() || request.password.isBlank()) {
-                call.respond(BadRequest)
-                return@post
-            }
+            when(userService.validateLoginRequest(request)){
+                is ValidationEvent.EmptyFieldError -> {
+                    call.respond(BadRequest)
+                    return@post
+                }
 
-
-            val isCorrectPassword = userRepository.doesPasswordForUserMatch(request.email, request.password)
-
-            if(isCorrectPassword){
-                call.respond(
-                    OK,
-                    BasicApiResponse(successful = true)
-                )
-            } else
-            {
-                call.respond(
-                    OK,
-                    BasicApiResponse(message = INVALID_CREDENTIALS, successful = false)
-                )
+                is ValidationEvent.Success -> {
+                    if (userService.isPasswordCorrect(request.email, request.password)) {
+                        call.respond(
+                            OK,
+                            BasicApiResponse(successful = true)
+                        )
+                    } else {
+                        call.respond(
+                            OK,
+                            BasicApiResponse(message = INVALID_CREDENTIALS, successful = false)
+                        )
+                    }
+                }
             }
         }
     }
