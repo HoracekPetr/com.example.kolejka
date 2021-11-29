@@ -26,4 +26,8 @@ class UserRepositoryImpl(
         val user = getUserByEmail(email)
         return user?.password == password
     }
+
+    override suspend fun doesEmailBelongToUserId(email: String, userId: String): Boolean {
+        return users.findOneById(userId)?.email == email
+    }
 }

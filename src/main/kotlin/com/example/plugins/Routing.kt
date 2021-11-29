@@ -10,6 +10,7 @@ import com.example.service.UserService
 import io.ktor.routing.*
 import io.ktor.application.*
 import org.koin.ktor.ext.inject
+import java.util.*
 
 fun Application.configureRouting() {
 
@@ -19,12 +20,21 @@ fun Application.configureRouting() {
     val userService: UserService by inject()
     val postService: PostService by inject()
 
+    val jwtIssuer = environment.config.property("jwt.domain").getString()
+    val jwtAudience = environment.config.property("jwt.audience").getString()
+    val jwtSecret = environment.config.property("jwt.secret").getString()
+
     routing {
         //User Routes
         createUserRoute(userService)
-        loginUserRoute(userService)
+        loginUserRoute(
+            userService = userService,
+            jwtIssuer = jwtIssuer,
+            jwtAudience = jwtAudience,
+            jwtSecret = jwtSecret
+        )
 
         //Post Routes
-        createPostRoute(postService)
+        createPostRoute(postService, userService)
     }
 }

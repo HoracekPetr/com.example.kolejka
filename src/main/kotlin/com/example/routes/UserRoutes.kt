@@ -1,9 +1,12 @@
 package com.example.routes
 
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.example.data.repositories.user.UserRepository
 import com.example.data.models.User
 import com.example.data.requests.CreateAccountRequest
 import com.example.data.requests.LoginRequest
+import com.example.data.responses.AuthResponse
 import com.example.data.responses.BasicApiResponse
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages.FIELDS_BLANK
@@ -17,6 +20,7 @@ import io.ktor.routing.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.OK
 import org.koin.ktor.ext.inject
+import java.util.*
 
 fun Route.createUserRoute(
     userService: UserService
@@ -41,6 +45,7 @@ fun Route.createUserRoute(
                     call.respond(
                         BasicApiResponse(FIELDS_BLANK, false)
                     )
+                    return@post
                 }
 
                 is ValidationEvent.Success -> {
@@ -55,7 +60,12 @@ fun Route.createUserRoute(
     }
 }
 
-fun Route.loginUserRoute(userService: UserService) {
+fun Route.loginUserRoute(
+    userService: UserService,
+    jwtIssuer: String,
+    jwtAudience: String,
+    jwtSecret: String
+) {
 
     route("/api/user/login") {
         post {
@@ -66,15 +76,27 @@ fun Route.loginUserRoute(userService: UserService) {
 
             when(userService.validateLoginRequest(request)){
                 is ValidationEvent.EmptyFieldError -> {
-                    call.respond(BadRequest)
+                    call.respond(
+                        BasicApiResponse(FIELDS_BLANK, false)
+                    )
                     return@post
                 }
 
                 is ValidationEvent.Success -> {
                     if (userService.isPasswordCorrect(request.email, request.password)) {
+
+                        val expiresIn = 1000L*60L*60L*24L*365L //token expiruje za rok
+
+                        val token = JWT.create()
+                            .withClaim("email", request.email)
+                            .withIssuer(jwtIssuer)
+                            .withExpiresAt(Date(System.currentTimeMillis() + expiresIn))
+                            .withAudience(jwtAudience)
+                            .sign(Algorithm.HMAC256(jwtSecret))
+
                         call.respond(
                             OK,
-                            BasicApiResponse(successful = true)
+                            AuthResponse(token = token)
                         )
                     } else {
                         call.respond(
