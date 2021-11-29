@@ -18,4 +18,5 @@ interface PostRepository {
 
     suspend fun getPostsByCreator(userId: String): List<Post>
 
+    suspend fun deletePost(id: String)
 }

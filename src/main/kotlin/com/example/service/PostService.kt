@@ -30,4 +30,7 @@ class PostService(
     ): List<Post>{
         return postRepository.getPostsByAll(page, pageSize)
     }
+
+    suspend fun getPost(postId: String): Post? = postRepository.getPostById(postId)
+    suspend fun deletePost(postId: String) = postRepository.deletePost(postId)
 }

@@ -2,10 +2,7 @@ package com.example.plugins
 
 import com.example.data.repositories.post.PostRepository
 import com.example.data.repositories.user.UserRepository
-import com.example.routes.createPostRoute
-import com.example.routes.createUserRoute
-import com.example.routes.getPostsByAll
-import com.example.routes.loginUserRoute
+import com.example.routes.*
 import com.example.service.PostService
 import com.example.service.UserService
 import io.ktor.routing.*
@@ -38,5 +35,6 @@ fun Application.configureRouting() {
         //Post Routes
         createPostRoute(postService, userService)
         getPostsByAll(postService)
+        deletePost(postService, userService)
     }
 }

@@ -5,6 +5,7 @@ import com.example.data.models.Post
 import com.example.data.repositories.post.PostRepository
 import com.example.data.requests.CreateAccountRequest
 import com.example.data.requests.CreatePostRequest
+import com.example.data.requests.DeletePostRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.plugins.email
 import com.example.service.PostService
@@ -70,6 +71,51 @@ fun Route.getPostsByAll(
                 val allPosts = postService.getPostsByAll(page, pageSize)
                 call.respond(
                     HttpStatusCode.OK, allPosts
+                )
+            }
+        }
+    }
+}
+
+fun Route.deletePost(
+    postService: PostService,
+    userService: UserService
+) {
+    authenticate {
+        route("/api/post/delete") {
+            delete {
+                val request = call.receiveOrNull<DeletePostRequest>() ?: kotlin.run {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@delete
+                }
+
+                val post = postService.getPost(request.postId)
+
+                if (post == null) {
+                    call.respond(HttpStatusCode.NotFound)
+                    return@delete
+                }
+
+                val isEmailByUser = userService.doesEmailBelongToUserId(
+                    email = call.principal<JWTPrincipal>()?.email ?: "",
+                    userId = post.userId
+                )
+
+                if (!isEmailByUser) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        "You are not authorized to execute this operation."
+                    )
+                    return@delete
+                }
+
+                postService.deletePost(request.postId)
+
+                call.respond(
+                    HttpStatusCode.OK,
+                    BasicApiResponse(
+                        successful = true
+                    )
                 )
             }
         }
