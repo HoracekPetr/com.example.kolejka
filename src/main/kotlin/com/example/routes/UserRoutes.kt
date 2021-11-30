@@ -2,8 +2,6 @@ package com.example.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.data.repositories.user.UserRepository
-import com.example.data.models.User
 import com.example.data.requests.CreateAccountRequest
 import com.example.data.requests.LoginRequest
 import com.example.data.responses.AuthResponse
@@ -19,10 +17,9 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.OK
-import org.koin.ktor.ext.inject
 import java.util.*
 
-fun Route.createUserRoute(
+fun Route.createUser(
     userService: UserService
 ) {
 
@@ -60,7 +57,7 @@ fun Route.createUserRoute(
     }
 }
 
-fun Route.loginUserRoute(
+fun Route.loginUser(
     userService: UserService,
     jwtIssuer: String,
     jwtAudience: String,

@@ -8,5 +8,6 @@ data class Comment(
     val id: String = ObjectId().toString(),
     val userId: String,
     val postId: String,
-    val comment: String
+    val comment: String,
+    val timestamp: Long
 )

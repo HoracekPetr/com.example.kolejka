@@ -20,7 +20,7 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
-fun Route.createPostRoute(
+fun Route.createPost(
     postService: PostService,
     userService: UserService
 ) {
@@ -32,18 +32,7 @@ fun Route.createPostRoute(
                     return@post
                 }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = request.userId
-                )
 
-                if (!isEmailByUser) {
-                    call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
-                    )
-                    return@post
-                }
 
                 postService.createPost(request)
 

@@ -34,7 +34,7 @@ class PostRepositoryImpl(
         return posts.find(Post::userId eq userId).toList()
     }
 
-    override suspend fun deletePost(id: String) {
-        posts.deleteOneById(id)
+    override suspend fun deletePost(postId: String) {
+        posts.deleteOneById(postId)
     }
 }

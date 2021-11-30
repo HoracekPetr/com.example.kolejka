@@ -1,14 +1,12 @@
 package com.example.plugins
 
-import com.example.data.repositories.post.PostRepository
-import com.example.data.repositories.user.UserRepository
 import com.example.routes.*
+import com.example.service.CommentService
 import com.example.service.PostService
 import com.example.service.UserService
 import io.ktor.routing.*
 import io.ktor.application.*
 import org.koin.ktor.ext.inject
-import java.util.*
 
 fun Application.configureRouting() {
 
@@ -17,15 +15,17 @@ fun Application.configureRouting() {
 
     val userService: UserService by inject()
     val postService: PostService by inject()
+    val commentService: CommentService by inject()
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
     val jwtSecret = environment.config.property("jwt.secret").getString()
 
     routing {
+
         //User Routes
-        createUserRoute(userService)
-        loginUserRoute(
+        createUser(userService)
+        loginUser(
             userService = userService,
             jwtIssuer = jwtIssuer,
             jwtAudience = jwtAudience,
@@ -33,8 +33,14 @@ fun Application.configureRouting() {
         )
 
         //Post Routes
-        createPostRoute(postService, userService)
+        createPost(postService, userService)
         getPostsByAll(postService)
         deletePost(postService, userService)
+
+        //Comment Routes
+        createComment(commentService, userService)
+        getCommentsForPost(commentService)
+        deleteComment(commentService,userService)
+
     }
 }
