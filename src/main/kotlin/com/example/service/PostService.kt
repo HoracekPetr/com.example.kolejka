@@ -33,4 +33,10 @@ class PostService(
 
     suspend fun getPost(postId: String): Post? = postRepository.getPostById(postId)
     suspend fun deletePost(postId: String) = postRepository.deletePost(postId)
+
+    suspend fun getPostsByCreator(userId: String): List<Post> = postRepository.getPostsByCreator(userId)
+    suspend fun getPostsWhereUserIsMember(userId: String): List<Post> = postRepository.getPostsWhereUserIsMember(userId)
+
+    suspend fun addPostMember(postId: String, userId: String): Boolean = postRepository.addPostMember(postId, userId)
+    suspend fun isPostMember(postId: String, userId: String): Boolean = postRepository.isPostMember(postId, userId)
 }

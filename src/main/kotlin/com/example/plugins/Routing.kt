@@ -35,7 +35,10 @@ fun Application.configureRouting() {
         //Post Routes
         createPost(postService, userService)
         getPostsByAll(postService)
+        getPostsByCreator(postService, userService)
+        getPostsWhereUserIsMember(postService, userService)
         deletePost(postService, userService)
+        addPostMember(postService, userService)
 
         //Comment Routes
         createComment(commentService, userService)

@@ -1,9 +1,6 @@
 package com.example.routes
 
-import com.auth0.jwt.JWT
-import com.example.data.models.Post
-import com.example.data.repositories.post.PostRepository
-import com.example.data.requests.CreateAccountRequest
+import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeletePostRequest
 import com.example.data.responses.BasicApiResponse
@@ -32,7 +29,18 @@ fun Route.createPost(
                     return@post
                 }
 
+                val isEmailByUser = userService.doesEmailBelongToUserId(
+                    email = call.principal<JWTPrincipal>()?.email ?: "",
+                    userId = request.userId
+                )
 
+                if (!isEmailByUser) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        "You are not authorized to execute this operation."
+                    )
+                    return@post
+                }
 
                 postService.createPost(request)
 
@@ -53,9 +61,9 @@ fun Route.getPostsByAll(
     authenticate {
         route("/api/post/getPostsByAll") {
             get {
-                val page = call.parameters[QueryParameters.PARAMETER_PAGE]?.toIntOrNull() ?: 0
+                val page = call.parameters[QueryParameters.PARAM_PAGE]?.toIntOrNull() ?: 0
                 val pageSize =
-                    call.parameters[QueryParameters.PARAMETER_PAGE_SIZE]?.toIntOrNull() ?: Constants.PAGE_SIZE
+                    call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.PAGE_SIZE
 
                 val allPosts = postService.getPostsByAll(page, pageSize)
                 call.respond(
@@ -106,6 +114,137 @@ fun Route.deletePost(
                         successful = true
                     )
                 )
+            }
+        }
+    }
+}
+
+fun Route.getPostsByCreator(
+    postService: PostService,
+    userService: UserService
+) {
+    authenticate {
+        route("/api/post/getPostsByCreator") {
+            get {
+                val userId = call.parameters[QueryParameters.PARAM_USER_ID] ?: kotlin.run {
+                    call.respond(
+                        HttpStatusCode.BadRequest
+                    )
+                    return@get
+                }
+
+                val isEmailByUser = userService.doesEmailBelongToUserId(
+                    email = call.principal<JWTPrincipal>()?.email ?: "",
+                    userId = userId
+                )
+
+                if (!isEmailByUser) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        "You are not authorized to execute this operation."
+                    )
+                    return@get
+                }
+
+                val postsByCreator = postService.getPostsByCreator(userId)
+
+                call.respond(
+                    HttpStatusCode.OK, postsByCreator
+                )
+            }
+        }
+    }
+}
+
+fun Route.getPostsWhereUserIsMember(
+    postService: PostService,
+    userService: UserService
+){
+    authenticate {
+        route("/api/post/getPostsWhereMember"){
+            get {
+                val userId = call.parameters[QueryParameters.PARAM_USER_ID] ?: kotlin.run {
+                    call.respond(
+                        HttpStatusCode.BadRequest
+                    )
+                    return@get
+                }
+
+                val isEmailByUser = userService.doesEmailBelongToUserId(
+                    email = call.principal<JWTPrincipal>()?.email ?: "",
+                    userId = userId
+                )
+
+                if (!isEmailByUser) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        "You are not authorized to execute this operation."
+                    )
+                    return@get
+                }
+
+                val postsWhereUserIsMember = postService.getPostsWhereUserIsMember(userId)
+
+                call.respond(
+                    HttpStatusCode.OK, postsWhereUserIsMember
+                )
+            }
+        }
+    }
+}
+
+fun Route.addPostMember(
+    postService: PostService,
+    userService: UserService
+) {
+    authenticate {
+        route("/api/post/addPostMember") {
+            post {
+                val request = call.receiveOrNull<AddMemberRequest>() ?: kotlin.run {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
+
+                val isEmailByUser = userService.doesEmailBelongToUserId(
+                    email = call.principal<JWTPrincipal>()?.email ?: "",
+                    userId = request.userId
+                )
+
+                if (!isEmailByUser) {
+                    call.respond(
+                        HttpStatusCode.Unauthorized,
+                        "You are not authorized to execute this operation."
+                    )
+                    return@post
+                }
+
+                if (!postService.isPostMember(request.postId, request.userId)) {
+                    if (postService.addPostMember(request.postId, request.userId)) {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            BasicApiResponse(
+                                message = "User added to post member list.",
+                                successful = true
+                            )
+                        )
+                    } else {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            BasicApiResponse(
+                                message = "Post doesn't exist!",
+                                successful = false
+                            )
+                        )
+                    }
+                } else {
+                    call.respond(
+                        HttpStatusCode.Conflict,
+                        BasicApiResponse(
+                            message = "You are already member of this post!",
+                            successful = false
+                        )
+                    )
+                }
             }
         }
     }

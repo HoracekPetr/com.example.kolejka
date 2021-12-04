@@ -12,11 +12,15 @@ interface PostRepository {
         pageSize: Int = PAGE_SIZE
     ): List<Post>
 
-    suspend fun getPostById(id: String): Post?
+    suspend fun getPostById(postId: String): Post?
 
-    suspend fun getPostsByMembers(userId: String): List<Post>
+    suspend fun getPostsWhereUserIsMember(userId: String): List<Post>
 
     suspend fun getPostsByCreator(userId: String): List<Post>
 
-    suspend fun deletePost(id: String)
+    suspend fun deletePost(postId: String)
+
+    suspend fun addPostMember(postId: String, userId: String):Boolean
+
+    suspend fun isPostMember(postId: String, userId: String): Boolean
 }
