@@ -4,7 +4,6 @@ import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeletePostRequest
 import com.example.data.responses.BasicApiResponse
-import com.example.plugins.email
 import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.Constants
@@ -18,8 +17,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 fun Route.createPost(
-    postService: PostService,
-    userService: UserService
+    postService: PostService
 ) {
     authenticate {
         route("/api/post/create") {
@@ -29,20 +27,9 @@ fun Route.createPost(
                     return@post
                 }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = request.userId
-                )
+                val userId = call.userId
 
-                if (!isEmailByUser) {
-                    call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
-                    )
-                    return@post
-                }
-
-                postService.createPost(request)
+                postService.createPost(request, userId)
 
                 call.respond(
                     HttpStatusCode.OK,
@@ -75,8 +62,7 @@ fun Route.getPostsByAll(
 }
 
 fun Route.deletePost(
-    postService: PostService,
-    userService: UserService
+    postService: PostService
 ) {
     authenticate {
         route("/api/post/delete") {
@@ -93,60 +79,33 @@ fun Route.deletePost(
                     return@delete
                 }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = post.userId
-                )
+                if(post.userId == call.userId) {
+                    postService.deletePost(request.postId)
 
-                if (!isEmailByUser) {
                     call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
+                        HttpStatusCode.OK,
+                        BasicApiResponse(
+                            successful = true
+                        )
                     )
-                    return@delete
+                } else {
+                    call.respond(
+                        HttpStatusCode.Unauthorized
+                    )
                 }
-
-                postService.deletePost(request.postId)
-
-                call.respond(
-                    HttpStatusCode.OK,
-                    BasicApiResponse(
-                        successful = true
-                    )
-                )
             }
         }
     }
 }
 
 fun Route.getPostsByCreator(
-    postService: PostService,
-    userService: UserService
+    postService: PostService
 ) {
     authenticate {
         route("/api/post/getPostsByCreator") {
             get {
-                val userId = call.parameters[QueryParameters.PARAM_USER_ID] ?: kotlin.run {
-                    call.respond(
-                        HttpStatusCode.BadRequest
-                    )
-                    return@get
-                }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = userId
-                )
-
-                if (!isEmailByUser) {
-                    call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
-                    )
-                    return@get
-                }
-
-                val postsByCreator = postService.getPostsByCreator(userId)
+                val postsByCreator = postService.getPostsByCreator(call.userId)
 
                 call.respond(
                     HttpStatusCode.OK, postsByCreator
@@ -157,33 +116,14 @@ fun Route.getPostsByCreator(
 }
 
 fun Route.getPostsWhereUserIsMember(
-    postService: PostService,
-    userService: UserService
+    postService: PostService
 ){
     authenticate {
         route("/api/post/getPostsWhereMember"){
             get {
-                val userId = call.parameters[QueryParameters.PARAM_USER_ID] ?: kotlin.run {
-                    call.respond(
-                        HttpStatusCode.BadRequest
-                    )
-                    return@get
-                }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = userId
-                )
 
-                if (!isEmailByUser) {
-                    call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
-                    )
-                    return@get
-                }
-
-                val postsWhereUserIsMember = postService.getPostsWhereUserIsMember(userId)
+                val postsWhereUserIsMember = postService.getPostsWhereUserIsMember(call.userId)
 
                 call.respond(
                     HttpStatusCode.OK, postsWhereUserIsMember
@@ -194,8 +134,7 @@ fun Route.getPostsWhereUserIsMember(
 }
 
 fun Route.addPostMember(
-    postService: PostService,
-    userService: UserService
+    postService: PostService
 ) {
     authenticate {
         route("/api/post/addPostMember") {
@@ -205,21 +144,8 @@ fun Route.addPostMember(
                     return@post
                 }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = request.userId
-                )
-
-                if (!isEmailByUser) {
-                    call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
-                    )
-                    return@post
-                }
-
-                if (!postService.isPostMember(request.postId, request.userId)) {
-                    if (postService.addPostMember(request.postId, request.userId)) {
+                if (!postService.isPostMember(request.postId, call.userId)) {
+                    if (postService.addPostMember(request.postId, call.userId)) {
                         call.respond(
                             HttpStatusCode.OK,
                             BasicApiResponse(

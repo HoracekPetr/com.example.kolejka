@@ -4,8 +4,8 @@ import com.example.data.requests.CreateCommentRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeleteCommentRequest
 import com.example.data.responses.BasicApiResponse
-import com.example.plugins.email
 import com.example.service.CommentService
+import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
 import com.example.util.CommentValidationEvent
@@ -21,9 +21,8 @@ import io.ktor.routing.*
 
 fun Route.createComment(
     commentService: CommentService,
-    userService: UserService
+    postService: PostService
 ) {
-
     authenticate {
         route("/api/comment/create") {
             post {
@@ -32,49 +31,51 @@ fun Route.createComment(
                     return@post
                 }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = request.userId
-                )
-
-                if (!isEmailByUser) {
-                    call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
-                    )
+                val post = postService.getPostById(request.postId) ?: kotlin.run {
+                    call.respond(HttpStatusCode.NotFound)
                     return@post
                 }
 
-                when (commentService.createComment(request)) {
-                    is CommentValidationEvent.EmptyFieldError -> {
-                        call.respond(
-                            HttpStatusCode.OK,
-                            BasicApiResponse(
-                                successful = false,
-                                message = ApiResponseMessages.FIELDS_BLANK
+                if (call.userId in post.members) {
+                    when (commentService.createComment(request, call.userId)) {
+                        is CommentValidationEvent.EmptyFieldError -> {
+                            call.respond(
+                                HttpStatusCode.OK,
+                                BasicApiResponse(
+                                    successful = false,
+                                    message = ApiResponseMessages.FIELDS_BLANK
+                                )
                             )
-                        )
-                    }
+                        }
 
-                    is CommentValidationEvent.CommentTooLong -> {
-                        call.respond(
-                            HttpStatusCode.OK,
-                            BasicApiResponse(
-                                successful = false,
-                                message = ApiResponseMessages.COMMENT_TOO_LONG
+                        is CommentValidationEvent.CommentTooLong -> {
+                            call.respond(
+                                HttpStatusCode.OK,
+                                BasicApiResponse(
+                                    successful = false,
+                                    message = ApiResponseMessages.COMMENT_TOO_LONG
+                                )
                             )
-                        )
 
-                    }
+                        }
 
-                    is CommentValidationEvent.Success -> {
-                        call.respond(
-                            HttpStatusCode.OK,
-                            BasicApiResponse(
-                                successful = true
+                        is CommentValidationEvent.Success -> {
+                            call.respond(
+                                HttpStatusCode.OK,
+                                BasicApiResponse(
+                                    successful = true
+                                )
                             )
-                        )
+                        }
                     }
+                } else {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        BasicApiResponse(
+                            message = "You can't comment on post you are not a member of.",
+                            successful = false
+                        )
+                    )
                 }
             }
         }
@@ -103,8 +104,7 @@ fun Route.getCommentsForPost(
 }
 
 fun Route.deleteComment(
-    commentService: CommentService,
-    userService: UserService
+    commentService: CommentService
 ) {
     authenticate {
         route("/api/comment/delete") {
@@ -121,27 +121,19 @@ fun Route.deleteComment(
                     return@delete
                 }
 
-                val isEmailByUser = userService.doesEmailBelongToUserId(
-                    email = call.principal<JWTPrincipal>()?.email ?: "",
-                    userId = comment.userId
-                )
+                if (comment.userId == call.userId) {
+                    commentService.deleteComment(request.commentId)
 
-                if (!isEmailByUser) {
                     call.respond(
-                        HttpStatusCode.Unauthorized,
-                        "You are not authorized to execute this operation."
+                        HttpStatusCode.OK,
+                        BasicApiResponse(
+                            successful = true
+                        )
                     )
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized)
                     return@delete
                 }
-
-                commentService.deleteComment(request.commentId)
-
-                call.respond(
-                    HttpStatusCode.OK,
-                    BasicApiResponse(
-                        successful = true
-                    )
-                )
             }
         }
     }

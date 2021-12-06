@@ -10,9 +10,9 @@ class CommentService(
     private val commentRepository: CommentRepository
 ) {
 
-    suspend fun createComment(createCommentRequest: CreateCommentRequest): CommentValidationEvent {
+    suspend fun createComment(createCommentRequest: CreateCommentRequest, userId: String): CommentValidationEvent {
         createCommentRequest.apply {
-            if (comment.isBlank() || postId.isBlank() || userId.isBlank()) {
+            if (comment.isBlank() || postId.isBlank()) {
                 CommentValidationEvent.EmptyFieldError
             }
             if(comment.length > Constants.MAX_COMMENT_LENGTH){
@@ -21,7 +21,7 @@ class CommentService(
         }
         commentRepository.createComment(
             Comment(
-                userId = createCommentRequest.userId,
+                userId = userId,
                 postId = createCommentRequest.postId,
                 comment = createCommentRequest.comment,
                 timestamp = System.currentTimeMillis()

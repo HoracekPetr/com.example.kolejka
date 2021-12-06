@@ -8,16 +8,16 @@ class PostService(
     private val postRepository: PostRepository
 ) {
 
-    suspend fun createPost(request: CreatePostRequest){
+    suspend fun createPost(request: CreatePostRequest, userId: String){
         postRepository.createPost(
             Post(
-                userId = request.userId,
+                userId = userId,
                 title = request.title,
                 description = request.description,
                 postImageUrl = request.postImageUrl,
                 limit = request.limit,
                 available = request.limit,
-                members = mutableListOf(request.userId),
+                members = mutableListOf(userId),
                 isEvent = request.isEvent,
                 isOffer = request.isOffer
             )
@@ -39,4 +39,6 @@ class PostService(
 
     suspend fun addPostMember(postId: String, userId: String): Boolean = postRepository.addPostMember(postId, userId)
     suspend fun isPostMember(postId: String, userId: String): Boolean = postRepository.isPostMember(postId, userId)
+
+    suspend fun getPostById(postId: String): Post? = postRepository.getPostById(postId)
 }

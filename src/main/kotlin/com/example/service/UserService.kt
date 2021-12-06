@@ -18,11 +18,19 @@ class UserService(
         return userRepository.doesEmailBelongToUserId(email, userId)
     }
 
-    suspend fun isPasswordCorrect(email: String, password: String): Boolean{
+    suspend fun isPasswordCorrect(email: String, password: String): Boolean {
         return userRepository.doesPasswordForUserMatch(email, password)
     }
 
-    suspend fun createUser(request: CreateAccountRequest){
+    suspend fun getUserByEmail(email: String): User? {
+        return userRepository.getUserByEmail(email)
+    }
+
+    fun isValidPassword(enteredPassword: String, actualPassword: String): Boolean {
+        return enteredPassword == actualPassword
+    }
+
+    suspend fun createUser(request: CreateAccountRequest) {
         userRepository.createUser(
             User(
                 email = request.email,

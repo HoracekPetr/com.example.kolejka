@@ -71,7 +71,8 @@ fun Route.loginUser(
                 return@post
             }
 
-            when(userService.validateLoginRequest(request)){
+            when (userService.validateLoginRequest(request)) {
+
                 is ValidationEvent.EmptyFieldError -> {
                     call.respond(
                         BasicApiResponse(FIELDS_BLANK, false)
@@ -80,12 +81,21 @@ fun Route.loginUser(
                 }
 
                 is ValidationEvent.Success -> {
-                    if (userService.isPasswordCorrect(request.email, request.password)) {
 
-                        val expiresIn = 1000L*60L*60L*24L*365L //token expiruje za rok
+                    val user = userService.getUserByEmail(request.email) ?: kotlin.run{
+                        call.respond(
+                            OK,
+                            BasicApiResponse(message = INVALID_CREDENTIALS, successful = false)
+                        )
+                        return@post
+                    }
+
+                    if (userService.isValidPassword(request.email, user.password)) {
+
+                        val expiresIn = 1000L * 60L * 60L * 24L * 365L //token expiruje za rok
 
                         val token = JWT.create()
-                            .withClaim("email", request.email)
+                            .withClaim("userId", user.id)
                             .withIssuer(jwtIssuer)
                             .withExpiresAt(Date(System.currentTimeMillis() + expiresIn))
                             .withAudience(jwtAudience)
