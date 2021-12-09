@@ -1,6 +1,5 @@
 package com.example.routes
 
-import com.example.data.models.Notification
 import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeletePostRequest
@@ -11,7 +10,6 @@ import com.example.service.CommentService
 import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.util.Constants
-import com.example.util.PostTypes
 import com.example.util.QueryParameters
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -152,44 +150,56 @@ fun Route.addPostMember(
                     return@post
                 }
 
-                if (!postService.isPostMember(request.postId, call.userId)) {
-                    if (postService.addPostMember(request.postId, call.userId)) {
+                val post = postService.getPost(request.postId)
 
-                        val post = postService.getPost(request.postId)
+                if (post != null) {
+                    if (!postService.isPostMember(request.postId, call.userId)) {
+                        if (postService.addPostMember(request.postId, call.userId)) {
 
-                        if(post != null) {
                             notificationService.addPostNotification(
                                 byUserId = call.userId,
                                 postId = request.postId,
                                 postType = PostType.fromType(post.type)
                             )
-                        }
 
+
+                            call.respond(
+                                HttpStatusCode.OK,
+                                BasicApiResponse(
+                                    message = "User added to post member list.",
+                                    successful = true
+                                )
+                            )
+
+                        } else {
+                            call.respond(
+                                HttpStatusCode.BadRequest,
+                                BasicApiResponse(
+                                    message = "Post doesn't exist!",
+                                    successful = false
+                                )
+                            )
+                        }
+                    } else if (postService.isPostMember(request.postId, call.userId) && post.userId == call.userId) {
                         call.respond(
-                            HttpStatusCode.OK,
+                            HttpStatusCode.Conflict,
                             BasicApiResponse(
-                                message = "User added to post member list.",
-                                successful = true
+                                message = "You're an owner of this post!",
+                                successful = false
                             )
                         )
                     } else {
+                        postService.removePostMember(request.postId, call.userId)
                         call.respond(
-                            HttpStatusCode.BadRequest,
+                            HttpStatusCode.OK,
                             BasicApiResponse(
-                                message = "Post doesn't exist!",
-                                successful = false
+                                message = "User removed from the post member list.",
+                                successful = true
                             )
                         )
                     }
                 } else {
-                    postService.removePostMember(request.postId, call.userId)
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BasicApiResponse(
-                            message = "User removed from the post member list.",
-                            successful = true
-                        )
-                    )
+                    call.respond(HttpStatusCode.BadRequest)
                 }
             }
         }

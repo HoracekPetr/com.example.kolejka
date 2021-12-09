@@ -1,20 +1,16 @@
 package com.example.routes
 
 import com.example.data.requests.CreateCommentRequest
-import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeleteCommentRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.service.CommentService
 import com.example.service.NotificationService
 import com.example.service.PostService
-import com.example.service.UserService
 import com.example.util.ApiResponseMessages
-import com.example.util.CommentValidationEvent
+import com.example.util.validation.CommentValidationEvent
 import com.example.util.QueryParameters
-import com.mongodb.client.model.ValidationAction
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -39,7 +35,7 @@ fun Route.createComment(
                 }
 
                 if (call.userId in post.members) {
-                    when (val result = commentService.createComment(request, call.userId)) {
+                    when (commentService.createComment(request, call.userId)) {
                         is CommentValidationEvent.EmptyFieldError -> {
                             call.respond(
                                 HttpStatusCode.OK,
@@ -68,7 +64,10 @@ fun Route.createComment(
                                     successful = true
                                 )
                             )
-                            notificationService.addCommentNotification(call.userId, request.postId, result.commentId)
+
+                            if(call.userId != post.userId) {
+                                notificationService.addCommentNotification(call.userId, request.postId)
+                            }
                         }
                     }
                 } else {

@@ -47,5 +47,8 @@ fun Application.configureRouting() {
         getCommentsForPost(commentService)
         deleteComment(commentService)
 
+        //Notification Routes
+        getNotificationsForUser(notificationService)
+
     }
 }

@@ -4,7 +4,7 @@ import com.example.data.models.User
 import com.example.data.repositories.user.UserRepository
 import com.example.data.requests.CreateAccountRequest
 import com.example.data.requests.LoginRequest
-import com.example.util.ValidationEvent
+import com.example.util.validation.ValidationEvent
 
 class UserService(
     private val userRepository: UserRepository

@@ -10,7 +10,7 @@ import com.example.service.UserService
 import com.example.util.ApiResponseMessages.FIELDS_BLANK
 import com.example.util.ApiResponseMessages.INVALID_CREDENTIALS
 import com.example.util.ApiResponseMessages.USER_ALREADY_EXISTS
-import com.example.util.ValidationEvent
+import com.example.util.validation.ValidationEvent
 import io.ktor.application.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -90,7 +90,7 @@ fun Route.loginUser(
                         return@post
                     }
 
-                    if (userService.isValidPassword(request.email, user.password)) {
+                    if (userService.isPasswordCorrect(request.email, user.password)) {
 
                         val expiresIn = 1000L * 60L * 60L * 24L * 365L //token expiruje za rok
 

@@ -3,7 +3,7 @@ package com.example.service
 import com.example.data.models.Comment
 import com.example.data.repositories.comment.CommentRepository
 import com.example.data.requests.CreateCommentRequest
-import com.example.util.CommentValidationEvent
+import com.example.util.validation.CommentValidationEvent
 import com.example.util.Constants
 
 class CommentService(
@@ -19,7 +19,8 @@ class CommentService(
                 CommentValidationEvent.CommentTooLong
             }
         }
-        val commentId = commentRepository.createComment(
+
+        commentRepository.createComment(
             Comment(
                 userId = userId,
                 postId = createCommentRequest.postId,
@@ -27,7 +28,8 @@ class CommentService(
                 timestamp = System.currentTimeMillis()
             )
         )
-        return CommentValidationEvent.Success(commentId = commentId)
+
+        return CommentValidationEvent.Success
     }
 
     suspend fun getCommentsForPost(postId: String): List<Comment>{

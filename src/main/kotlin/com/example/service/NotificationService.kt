@@ -40,19 +40,18 @@ class NotificationService(
 
     suspend fun addCommentNotification(
         byUserId: String,
-        postId: String,
-        commentId: String
+        postId: String
     ): Boolean{
 
-        val userIdOfPost = postRepository.getPostById(postId)?.userId ?: return false
+        val toUserId = postRepository.getPostById(postId)?.userId ?: return false
 
         return notificationRepository.createNotification(
             Notification(
                 byUserID = byUserId,
-                toUserID = userIdOfPost,
+                toUserID = toUserId,
                 timestamp = System.currentTimeMillis(),
                 type = NotificationAction.CommentedOn.type,
-                parentID = commentId
+                parentID = postId
             )
         )
     }

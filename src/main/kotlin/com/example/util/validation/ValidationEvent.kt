@@ -1,4 +1,4 @@
-package com.example.util
+package com.example.util.validation
 
 sealed class ValidationEvent{
     object EmptyFieldError: ValidationEvent()

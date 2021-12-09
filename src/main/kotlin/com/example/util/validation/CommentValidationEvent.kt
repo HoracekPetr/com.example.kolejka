@@ -1,7 +1,7 @@
-package com.example.util
+package com.example.util.validation
 
 sealed class CommentValidationEvent {
     object EmptyFieldError: CommentValidationEvent()
     object CommentTooLong: CommentValidationEvent()
-    data class Success(val commentId: String): CommentValidationEvent()
+    object Success: CommentValidationEvent()
 }
