@@ -18,6 +18,10 @@ class UserRepositoryImpl(
         return users.findOneById(id)
     }
 
+    override suspend fun getUsernameById(id: String): String? {
+        return users.findOneById(id)?.username
+    }
+
     override suspend fun getUserByEmail(email: String): User? {
         return users.findOne(User::email eq email)
     }

@@ -5,6 +5,7 @@ import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeleteCommentRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.service.CommentService
+import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
@@ -21,6 +22,7 @@ import io.ktor.routing.*
 
 fun Route.createComment(
     commentService: CommentService,
+    notificationService: NotificationService,
     postService: PostService
 ) {
     authenticate {
@@ -37,7 +39,7 @@ fun Route.createComment(
                 }
 
                 if (call.userId in post.members) {
-                    when (commentService.createComment(request, call.userId)) {
+                    when (val result = commentService.createComment(request, call.userId)) {
                         is CommentValidationEvent.EmptyFieldError -> {
                             call.respond(
                                 HttpStatusCode.OK,
@@ -66,6 +68,7 @@ fun Route.createComment(
                                     successful = true
                                 )
                             )
+                            notificationService.addCommentNotification(call.userId, request.postId, result.commentId)
                         }
                     }
                 } else {

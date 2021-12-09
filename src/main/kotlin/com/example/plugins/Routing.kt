@@ -2,6 +2,7 @@ package com.example.plugins
 
 import com.example.routes.*
 import com.example.service.CommentService
+import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
 import io.ktor.routing.*
@@ -16,6 +17,7 @@ fun Application.configureRouting() {
     val userService: UserService by inject()
     val postService: PostService by inject()
     val commentService: CommentService by inject()
+    val notificationService: NotificationService by inject()
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
@@ -33,17 +35,17 @@ fun Application.configureRouting() {
         )
 
         //Post Routes
-        createPost(postService, userService)
+        createPost(postService)
         getPostsByAll(postService)
-        getPostsByCreator(postService, userService)
-        getPostsWhereUserIsMember(postService, userService)
-        deletePost(postService, userService)
-        addPostMember(postService, userService)
+        getPostsByCreator(postService)
+        getPostsWhereUserIsMember(postService)
+        deletePost(postService, commentService)
+        addPostMember(postService, notificationService)
 
         //Comment Routes
-        createComment(commentService, userService)
+        createComment(commentService, notificationService, postService)
         getCommentsForPost(commentService)
-        deleteComment(commentService,userService)
+        deleteComment(commentService)
 
     }
 }

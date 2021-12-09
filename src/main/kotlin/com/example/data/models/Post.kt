@@ -13,6 +13,5 @@ data class Post(
     val members: List<String>,
     val available: Int,
     val limit: Int,
-    val isEvent: Boolean,
-    val isOffer: Boolean
+    val type: Int
 )

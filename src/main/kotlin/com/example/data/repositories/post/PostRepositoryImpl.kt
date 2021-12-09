@@ -32,13 +32,18 @@ class PostRepositoryImpl(
         return posts.find(Post::userId eq userId).toList()
     }
 
-    override suspend fun deletePost(postId: String) {
-        posts.deleteOneById(postId)
+    override suspend fun deletePost(postId: String): Boolean {
+        return posts.deleteOneById(postId).wasAcknowledged()
     }
 
     override suspend fun addPostMember(postId: String, userId: String):Boolean {
         val postMembers = posts.findOneById(postId)?.members ?: return false
         return posts.updateOneById(postId, setValue(Post::members, postMembers + userId)).wasAcknowledged()
+    }
+
+    override suspend fun removePostMember(postId: String, userId: String): Boolean {
+        val postMembers = posts.findOneById(postId)?.members ?: return false
+        return posts.updateOneById(postId, setValue(Post::members, postMembers - userId)).wasAcknowledged()
     }
 
     override suspend fun isPostMember(postId: String, userId: String): Boolean {

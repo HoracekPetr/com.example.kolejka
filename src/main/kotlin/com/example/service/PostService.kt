@@ -18,8 +18,7 @@ class PostService(
                 limit = request.limit,
                 available = request.limit,
                 members = mutableListOf(userId),
-                isEvent = request.isEvent,
-                isOffer = request.isOffer
+                type = request.type
             )
         )
     }
@@ -32,12 +31,13 @@ class PostService(
     }
 
     suspend fun getPost(postId: String): Post? = postRepository.getPostById(postId)
-    suspend fun deletePost(postId: String) = postRepository.deletePost(postId)
+    suspend fun deletePost(postId: String): Boolean = postRepository.deletePost(postId)
 
     suspend fun getPostsByCreator(userId: String): List<Post> = postRepository.getPostsByCreator(userId)
     suspend fun getPostsWhereUserIsMember(userId: String): List<Post> = postRepository.getPostsWhereUserIsMember(userId)
 
     suspend fun addPostMember(postId: String, userId: String): Boolean = postRepository.addPostMember(postId, userId)
+    suspend fun removePostMember(postId: String, userId: String): Boolean = postRepository.removePostMember(postId, userId)
     suspend fun isPostMember(postId: String, userId: String): Boolean = postRepository.isPostMember(postId, userId)
 
     suspend fun getPostById(postId: String): Post? = postRepository.getPostById(postId)

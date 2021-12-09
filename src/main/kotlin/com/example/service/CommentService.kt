@@ -19,7 +19,7 @@ class CommentService(
                 CommentValidationEvent.CommentTooLong
             }
         }
-        commentRepository.createComment(
+        val commentId = commentRepository.createComment(
             Comment(
                 userId = userId,
                 postId = createCommentRequest.postId,
@@ -27,12 +27,14 @@ class CommentService(
                 timestamp = System.currentTimeMillis()
             )
         )
-        return CommentValidationEvent.Success
+        return CommentValidationEvent.Success(commentId = commentId)
     }
 
     suspend fun getCommentsForPost(postId: String): List<Comment>{
         return commentRepository.getCommentsForPost(postId)
     }
+
+    suspend fun deleteCommentsForPost(postId: String) = commentRepository.deleteCommentsForPost(postId)
 
     suspend fun deleteComment(commentId: String): Boolean = commentRepository.deleteComment(commentId)
 

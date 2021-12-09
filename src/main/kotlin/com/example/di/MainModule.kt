@@ -2,11 +2,14 @@ package com.example.di
 
 import com.example.data.repositories.comment.CommentRepository
 import com.example.data.repositories.comment.CommentRepositoryImpl
+import com.example.data.repositories.notification.NotificationRepository
+import com.example.data.repositories.notification.NotificationRepositoryImpl
 import com.example.data.repositories.post.PostRepository
 import com.example.data.repositories.post.PostRepositoryImpl
 import com.example.data.repositories.user.UserRepository
 import com.example.data.repositories.user.UserRepositoryImpl
 import com.example.service.CommentService
+import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.Constants.DATABASE_NAME
@@ -33,6 +36,10 @@ val mainModule = module {
         CommentRepositoryImpl(get())
     }
 
+    single <NotificationRepository>{
+        NotificationRepositoryImpl(get())
+    }
+
     single {
         UserService(get())
     }
@@ -43,5 +50,9 @@ val mainModule = module {
 
     single{
         CommentService(get())
+    }
+
+    single {
+        NotificationService(get(), get(), get())
     }
 }

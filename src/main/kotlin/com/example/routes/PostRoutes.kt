@@ -1,16 +1,20 @@
 package com.example.routes
 
+import com.example.data.models.Notification
 import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeletePostRequest
 import com.example.data.responses.BasicApiResponse
+import com.example.data.util.NotificationAction
+import com.example.data.util.PostType
+import com.example.service.CommentService
+import com.example.service.NotificationService
 import com.example.service.PostService
-import com.example.service.UserService
 import com.example.util.Constants
+import com.example.util.PostTypes
 import com.example.util.QueryParameters
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -50,7 +54,7 @@ fun Route.getPostsByAll(
             get {
                 val page = call.parameters[QueryParameters.PARAM_PAGE]?.toIntOrNull() ?: 0
                 val pageSize =
-                    call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.PAGE_SIZE
+                    call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
 
                 val allPosts = postService.getPostsByAll(page, pageSize)
                 call.respond(
@@ -62,7 +66,8 @@ fun Route.getPostsByAll(
 }
 
 fun Route.deletePost(
-    postService: PostService
+    postService: PostService,
+    commentService: CommentService
 ) {
     authenticate {
         route("/api/post/delete") {
@@ -79,8 +84,10 @@ fun Route.deletePost(
                     return@delete
                 }
 
-                if(post.userId == call.userId) {
+                if (post.userId == call.userId) {
+
                     postService.deletePost(request.postId)
+                    commentService.deleteCommentsForPost(request.postId)
 
                     call.respond(
                         HttpStatusCode.OK,
@@ -117,9 +124,9 @@ fun Route.getPostsByCreator(
 
 fun Route.getPostsWhereUserIsMember(
     postService: PostService
-){
+) {
     authenticate {
-        route("/api/post/getPostsWhereMember"){
+        route("/api/post/getPostsWhereMember") {
             get {
 
 
@@ -134,7 +141,8 @@ fun Route.getPostsWhereUserIsMember(
 }
 
 fun Route.addPostMember(
-    postService: PostService
+    postService: PostService,
+    notificationService: NotificationService
 ) {
     authenticate {
         route("/api/post/addPostMember") {
@@ -146,6 +154,17 @@ fun Route.addPostMember(
 
                 if (!postService.isPostMember(request.postId, call.userId)) {
                     if (postService.addPostMember(request.postId, call.userId)) {
+
+                        val post = postService.getPost(request.postId)
+
+                        if(post != null) {
+                            notificationService.addPostNotification(
+                                byUserId = call.userId,
+                                postId = request.postId,
+                                postType = PostType.fromType(post.type)
+                            )
+                        }
+
                         call.respond(
                             HttpStatusCode.OK,
                             BasicApiResponse(
@@ -163,11 +182,12 @@ fun Route.addPostMember(
                         )
                     }
                 } else {
+                    postService.removePostMember(request.postId, call.userId)
                     call.respond(
-                        HttpStatusCode.Conflict,
+                        HttpStatusCode.OK,
                         BasicApiResponse(
-                            message = "You are already member of this post!",
-                            successful = false
+                            message = "User removed from the post member list.",
+                            successful = true
                         )
                     )
                 }
@@ -175,3 +195,5 @@ fun Route.addPostMember(
         }
     }
 }
+
+
