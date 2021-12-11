@@ -7,7 +7,9 @@ import com.example.service.PostService
 import com.example.service.UserService
 import io.ktor.routing.*
 import io.ktor.application.*
+import io.ktor.http.content.*
 import org.koin.ktor.ext.inject
+import java.io.File
 
 fun Application.configureRouting() {
 
@@ -25,6 +27,11 @@ fun Application.configureRouting() {
 
     routing {
 
+        //Static Routes
+        static {
+            resources("static")
+        }
+
         //User Routes
         createUser(userService)
         loginUser(
@@ -33,6 +40,8 @@ fun Application.configureRouting() {
             jwtAudience = jwtAudience,
             jwtSecret = jwtSecret
         )
+        getUserProfile(userService)
+        updateUserProfile(userService)
 
         //Post Routes
         createPost(postService)

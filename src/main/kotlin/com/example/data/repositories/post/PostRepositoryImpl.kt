@@ -6,7 +6,7 @@ import org.litote.kmongo.coroutine.CoroutineDatabase
 
 class PostRepositoryImpl(
     db: CoroutineDatabase
-):PostRepository {
+) : PostRepository {
 
     private val posts = db.getCollection<Post>()
 
@@ -21,22 +21,28 @@ class PostRepositoryImpl(
     }
 
     override suspend fun getPostsByAll(page: Int, pageSize: Int): List<Post> {
-        return posts.find().skip(page*pageSize).limit(pageSize).toList()
+        return posts.find().skip(page * pageSize).limit(pageSize).toList()
     }
 
-    override suspend fun getPostsWhereUserIsMember(userId: String): List<Post> {
-        return posts.find(and(Post::members contains userId, Post::userId ne userId)).toList()
+    override suspend fun getPostsWhereUserIsMember(userId: String, page: Int, pageSize: Int): List<Post> {
+        return posts.find(and(Post::members contains userId, Post::userId ne userId))
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .toList()
     }
 
-    override suspend fun getPostsByCreator(userId: String): List<Post> {
-        return posts.find(Post::userId eq userId).toList()
+    override suspend fun getPostsByCreator(userId: String, page: Int, pageSize: Int): List<Post> {
+        return posts.find(Post::userId eq userId)
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .toList()
     }
 
     override suspend fun deletePost(postId: String): Boolean {
         return posts.deleteOneById(postId).wasAcknowledged()
     }
 
-    override suspend fun addPostMember(postId: String, userId: String):Boolean {
+    override suspend fun addPostMember(postId: String, userId: String): Boolean {
         val postMembers = posts.findOneById(postId)?.members ?: return false
         return posts.updateOneById(postId, setValue(Post::members, postMembers + userId)).wasAcknowledged()
     }

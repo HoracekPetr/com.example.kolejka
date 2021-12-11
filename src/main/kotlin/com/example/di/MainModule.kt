@@ -13,6 +13,7 @@ import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.Constants.DATABASE_NAME
+import com.google.gson.Gson
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
@@ -54,5 +55,9 @@ val mainModule = module {
 
     single {
         NotificationService(get(), get(), get())
+    }
+
+    single{
+        Gson()
     }
 }

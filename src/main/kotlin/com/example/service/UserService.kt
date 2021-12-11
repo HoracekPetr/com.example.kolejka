@@ -4,6 +4,8 @@ import com.example.data.models.User
 import com.example.data.repositories.user.UserRepository
 import com.example.data.requests.CreateAccountRequest
 import com.example.data.requests.LoginRequest
+import com.example.data.requests.UpdateProfileRequest
+import com.example.data.responses.ProfileResponse
 import com.example.util.validation.ValidationEvent
 
 class UserService(
@@ -14,9 +16,9 @@ class UserService(
         return userRepository.getUserByEmail(email) != null
     }
 
-    suspend fun doesEmailBelongToUserId(email: String, userId: String): Boolean {
+/*    suspend fun doesEmailBelongToUserId(email: String, userId: String): Boolean {
         return userRepository.doesEmailBelongToUserId(email, userId)
-    }
+    }*/
 
     suspend fun isPasswordCorrect(email: String, password: String): Boolean {
         return userRepository.doesPasswordForUserMatch(email, password)
@@ -26,9 +28,22 @@ class UserService(
         return userRepository.getUserByEmail(email)
     }
 
-    fun isValidPassword(enteredPassword: String, actualPassword: String): Boolean {
-        return enteredPassword == actualPassword
+    suspend fun getUserProfile(userId: String): ProfileResponse? {
+
+        val user = userRepository.getUserById(userId) ?: return null
+
+        return ProfileResponse(
+            username = user.username,
+            profilePictureUrl = user.profilePictureURL,
+            bannerR = user.bannerR,
+            bannerG = user.bannerG,
+            bannerB = user.bannerB
+        )
     }
+
+/*    fun isValidPassword(enteredPassword: String, actualPassword: String): Boolean {
+        return enteredPassword == actualPassword
+    }*/
 
     suspend fun createUser(request: CreateAccountRequest) {
         userRepository.createUser(
@@ -36,10 +51,16 @@ class UserService(
                 email = request.email,
                 username = request.username,
                 password = request.password,
-                profileImageURL = ""
+                profilePictureURL = ""
             )
         )
     }
+
+    suspend fun updateUser(
+        userId: String,
+        profilePictureUrl: String,
+        updateProfileRequest: UpdateProfileRequest
+    ): Boolean = userRepository.updateUser(userId, profilePictureUrl, updateProfileRequest)
 
     fun validateCreateAccountRequest(request: CreateAccountRequest): ValidationEvent {
         return if (request.email.isBlank() || request.password.isBlank() || request.username.isBlank()) {

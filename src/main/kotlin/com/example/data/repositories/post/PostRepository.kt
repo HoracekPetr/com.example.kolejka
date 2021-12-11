@@ -14,13 +14,19 @@ interface PostRepository {
 
     suspend fun getPostById(postId: String): Post?
 
-    suspend fun getPostsWhereUserIsMember(userId: String): List<Post>
+    suspend fun getPostsWhereUserIsMember(
+        userId: String, page: Int = 0,
+        pageSize: Int = POSTS_PAGE_SIZE
+    ): List<Post>
 
-    suspend fun getPostsByCreator(userId: String): List<Post>
+    suspend fun getPostsByCreator(
+        userId: String, page: Int = 0,
+        pageSize: Int = POSTS_PAGE_SIZE
+    ): List<Post>
 
     suspend fun deletePost(postId: String): Boolean
 
-    suspend fun addPostMember(postId: String, userId: String):Boolean
+    suspend fun addPostMember(postId: String, userId: String): Boolean
 
     suspend fun removePostMember(postId: String, userId: String): Boolean
 
