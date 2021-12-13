@@ -8,13 +8,13 @@ class PostService(
     private val postRepository: PostRepository
 ) {
 
-    suspend fun createPost(request: CreatePostRequest, userId: String){
-        postRepository.createPost(
+    suspend fun createPost(request: CreatePostRequest, postPictureUrl: String, userId: String): Boolean{
+        return postRepository.createPost(
             Post(
                 userId = userId,
                 title = request.title,
                 description = request.description,
-                postImageUrl = request.postImageUrl,
+                postPictureUrl = postPictureUrl,
                 limit = request.limit,
                 available = request.limit,
                 members = mutableListOf(userId),

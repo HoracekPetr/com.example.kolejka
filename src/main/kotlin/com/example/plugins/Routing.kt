@@ -27,11 +27,6 @@ fun Application.configureRouting() {
 
     routing {
 
-        //Static Routes
-        static {
-            resources("static")
-        }
-
         //User Routes
         createUser(userService)
         loginUser(
@@ -58,6 +53,11 @@ fun Application.configureRouting() {
 
         //Notification Routes
         getNotificationsForUser(notificationService)
+
+        //Static Routes
+        static {
+            resources("static")
+        }
 
     }
 }

@@ -181,10 +181,7 @@ fun Route.updateUserProfile(
                         }
 
                         is PartData.FileItem -> {
-                            val fileBytes = part.streamProvider().readBytes()
-                            val fileExtension = part.originalFileName?.takeLastWhile { it != '.'}
-                            fileName = UUID.randomUUID().toString() + "." + fileExtension
-                            File("${PROFILE_PIC_PATH}/$fileName").writeBytes(fileBytes)
+                            fileName = part.save(PROFILE_PIC_PATH)
                         }
 
                         is PartData.BinaryItem -> Unit

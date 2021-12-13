@@ -3,6 +3,7 @@ package com.example.routes
 import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeletePostRequest
+import com.example.data.requests.UpdateProfileRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.data.util.NotificationAction
 import com.example.data.util.PostType
@@ -10,35 +11,80 @@ import com.example.service.CommentService
 import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.util.Constants
+import com.example.util.Constants.POST_PIC_PATH
+import com.example.util.Constants.POST_PIC_URL
+import com.example.util.Constants.PROFILE_PIC_URL
 import com.example.util.QueryParameters
+import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.koin.ktor.ext.inject
+import java.io.File
+import java.util.*
 
 fun Route.createPost(
     postService: PostService
 ) {
+
+    val gson: Gson by inject()
+
     authenticate {
         route("/api/post/create") {
             post {
-                val request = call.receiveOrNull<CreatePostRequest>() ?: kotlin.run {
-                    call.respond(HttpStatusCode.BadRequest)
-                    return@post
+                val multipart = call.receiveMultipart()
+                var createPostRequest: CreatePostRequest? = null
+                var fileName: String? = null
+
+                multipart.forEachPart { part ->
+                    when (part) {
+                        is PartData.FormItem -> {
+                            if (part.name == "create_post_data") {
+                                createPostRequest = gson.fromJson(part.value, CreatePostRequest::class.java)
+                            }
+                        }
+
+                        is PartData.FileItem -> {
+                            fileName = part.save(POST_PIC_PATH)
+                        }
+
+                        is PartData.BinaryItem -> Unit
+                    }
                 }
 
+                val postPictureURL = "${POST_PIC_URL}/$fileName"
                 val userId = call.userId
 
-                postService.createPost(request, userId)
-
-                call.respond(
-                    HttpStatusCode.OK,
-                    BasicApiResponse(
-                        successful = true
+                createPostRequest?.let { request ->
+                    val postCreatedAcknowledged = postService.createPost(
+                        request = request,
+                        postPictureUrl = postPictureURL,
+                        userId = userId
                     )
-                )
+
+                    if (postCreatedAcknowledged) {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            BasicApiResponse(
+                                successful = true
+                            )
+                        )
+                    } else {
+                        File("${POST_PIC_PATH}/$fileName").delete()
+                        call.respond(
+                            HttpStatusCode.InternalServerError
+                        )
+                    }
+                } ?: kotlin.run {
+                    call.respond(
+                        HttpStatusCode.BadRequest
+                    )
+                    return@post
+                }
             }
         }
     }

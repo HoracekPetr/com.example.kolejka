@@ -9,7 +9,7 @@ data class Post(
     val userId: String,
     val title: String,
     val description: String,
-    val postImageUrl: String,
+    val postPictureUrl: String,
     val members: List<String>,
     val available: Int,
     val limit: Int,

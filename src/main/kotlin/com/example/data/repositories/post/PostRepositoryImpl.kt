@@ -11,8 +11,8 @@ class PostRepositoryImpl(
     private val posts = db.getCollection<Post>()
 
 
-    override suspend fun createPost(post: Post) {
-        posts.insertOne(post)
+    override suspend fun createPost(post: Post): Boolean {
+        return posts.insertOne(post).wasAcknowledged()
     }
 
 

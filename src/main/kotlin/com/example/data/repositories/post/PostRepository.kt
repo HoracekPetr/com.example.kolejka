@@ -5,7 +5,7 @@ import com.example.util.Constants.POSTS_PAGE_SIZE
 
 interface PostRepository {
 
-    suspend fun createPost(post: Post)
+    suspend fun createPost(post: Post): Boolean
 
     suspend fun getPostsByAll(
         page: Int = 0,
