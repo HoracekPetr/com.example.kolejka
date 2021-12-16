@@ -54,6 +54,7 @@ fun Route.createPost(
 
                         is PartData.BinaryItem -> Unit
                     }
+                    part.dispose
                 }
 
                 val postPictureURL = "${POST_PIC_URL}/$fileName"

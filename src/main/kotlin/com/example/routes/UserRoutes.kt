@@ -186,6 +186,7 @@ fun Route.updateUserProfile(
 
                         is PartData.BinaryItem -> Unit
                     }
+                    part.dispose
                 }
 
 
