@@ -70,7 +70,7 @@ fun Route.createPost(
                     if (postCreatedAcknowledged) {
                         call.respond(
                             HttpStatusCode.OK,
-                            BasicApiResponse(
+                            BasicApiResponse<Unit>(
                                 successful = true
                             )
                         )
@@ -136,7 +136,7 @@ fun Route.deletePost(
 
                     call.respond(
                         HttpStatusCode.OK,
-                        BasicApiResponse(
+                        BasicApiResponse<Unit>(
                             successful = true
                         )
                     )
@@ -225,7 +225,7 @@ fun Route.addPostMember(
 
                             call.respond(
                                 HttpStatusCode.OK,
-                                BasicApiResponse(
+                                BasicApiResponse<Unit>(
                                     message = "User added to post member list.",
                                     successful = true
                                 )
@@ -234,7 +234,7 @@ fun Route.addPostMember(
                         } else {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                BasicApiResponse(
+                                BasicApiResponse<Unit>(
                                     message = "Post doesn't exist!",
                                     successful = false
                                 )
@@ -243,7 +243,7 @@ fun Route.addPostMember(
                     } else if (postService.isPostMember(request.postId, call.userId) && post.userId == call.userId) {
                         call.respond(
                             HttpStatusCode.Conflict,
-                            BasicApiResponse(
+                            BasicApiResponse<Unit>(
                                 message = "You're an owner of this post!",
                                 successful = false
                             )
@@ -252,7 +252,7 @@ fun Route.addPostMember(
                         postService.removePostMember(request.postId, call.userId)
                         call.respond(
                             HttpStatusCode.OK,
-                            BasicApiResponse(
+                            BasicApiResponse<Unit>(
                                 message = "User removed from the post member list.",
                                 successful = true
                             )

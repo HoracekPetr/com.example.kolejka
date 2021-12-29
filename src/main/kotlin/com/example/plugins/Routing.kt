@@ -9,7 +9,6 @@ import io.ktor.routing.*
 import io.ktor.application.*
 import io.ktor.http.content.*
 import org.koin.ktor.ext.inject
-import java.io.File
 
 fun Application.configureRouting() {
 
@@ -28,7 +27,7 @@ fun Application.configureRouting() {
     routing {
 
         //User Routes
-        createUser(userService)
+        registerUser(userService)
         loginUser(
             userService = userService,
             jwtIssuer = jwtIssuer,

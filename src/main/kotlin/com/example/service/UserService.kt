@@ -2,8 +2,8 @@ package com.example.service
 
 import com.example.data.models.User
 import com.example.data.repositories.user.UserRepository
-import com.example.data.requests.CreateAccountRequest
-import com.example.data.requests.LoginRequest
+import com.example.data.requests.RegisterAccountRequest
+import com.example.data.requests.LoginAccountRequest
 import com.example.data.requests.UpdateProfileRequest
 import com.example.data.responses.ProfileResponse
 import com.example.util.validation.ValidationEvent
@@ -45,7 +45,7 @@ class UserService(
         return enteredPassword == actualPassword
     }*/
 
-    suspend fun createUser(request: CreateAccountRequest) {
+    suspend fun createUser(request: RegisterAccountRequest) {
         userRepository.createUser(
             User(
                 email = request.email,
@@ -62,13 +62,13 @@ class UserService(
         updateProfileRequest: UpdateProfileRequest
     ): Boolean = userRepository.updateUser(userId, profilePictureUrl, updateProfileRequest)
 
-    fun validateCreateAccountRequest(request: CreateAccountRequest): ValidationEvent {
+    fun validateCreateAccountRequest(request: RegisterAccountRequest): ValidationEvent {
         return if (request.email.isBlank() || request.password.isBlank() || request.username.isBlank()) {
             ValidationEvent.EmptyFieldError
         } else ValidationEvent.Success
     }
 
-    fun validateLoginRequest(request: LoginRequest): ValidationEvent {
+    fun validateLoginRequest(request: LoginAccountRequest): ValidationEvent {
         return if (request.email.isBlank() || request.password.isBlank()) {
             ValidationEvent.EmptyFieldError
         } else ValidationEvent.Success

@@ -1,6 +1,6 @@
 package com.example.data.requests
 
-data class LoginRequest(
+data class LoginAccountRequest(
     val email: String,
     val password: String
 )

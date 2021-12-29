@@ -39,7 +39,7 @@ fun Route.createComment(
                         is CommentValidationEvent.EmptyFieldError -> {
                             call.respond(
                                 HttpStatusCode.OK,
-                                BasicApiResponse(
+                                BasicApiResponse<Unit>(
                                     successful = false,
                                     message = ApiResponseMessages.FIELDS_BLANK
                                 )
@@ -49,7 +49,7 @@ fun Route.createComment(
                         is CommentValidationEvent.CommentTooLong -> {
                             call.respond(
                                 HttpStatusCode.OK,
-                                BasicApiResponse(
+                                BasicApiResponse<Unit>(
                                     successful = false,
                                     message = ApiResponseMessages.COMMENT_TOO_LONG
                                 )
@@ -60,7 +60,7 @@ fun Route.createComment(
                         is CommentValidationEvent.Success -> {
                             call.respond(
                                 HttpStatusCode.OK,
-                                BasicApiResponse(
+                                BasicApiResponse<Unit>(
                                     successful = true
                                 )
                             )
@@ -73,7 +73,7 @@ fun Route.createComment(
                 } else {
                     call.respond(
                         HttpStatusCode.BadRequest,
-                        BasicApiResponse(
+                        BasicApiResponse<Unit>(
                             message = "You can't comment on post you are not a member of.",
                             successful = false
                         )
@@ -128,7 +128,7 @@ fun Route.deleteComment(
 
                     call.respond(
                         HttpStatusCode.OK,
-                        BasicApiResponse(
+                        BasicApiResponse<Unit>(
                             successful = true
                         )
                     )

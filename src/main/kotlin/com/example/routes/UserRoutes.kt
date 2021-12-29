@@ -2,8 +2,8 @@ package com.example.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.data.requests.CreateAccountRequest
-import com.example.data.requests.LoginRequest
+import com.example.data.requests.RegisterAccountRequest
+import com.example.data.requests.LoginAccountRequest
 import com.example.data.requests.UpdateProfileRequest
 import com.example.data.responses.AuthResponse
 import com.example.data.responses.BasicApiResponse
@@ -30,20 +30,20 @@ import org.koin.ktor.ext.inject
 import java.io.File
 import java.util.*
 
-fun Route.createUser(
+fun Route.registerUser(
     userService: UserService
 ) {
 
     route("/api/user/create") {
         post {
-            val request = call.receiveOrNull<CreateAccountRequest>() ?: kotlin.run {
+            val request = call.receiveOrNull<RegisterAccountRequest>() ?: kotlin.run {
                 call.respond(BadRequest)
                 return@post
             }
 
             if (userService.doesUserWithEmailExist(request.email)) {
                 call.respond(
-                    BasicApiResponse(USER_ALREADY_EXISTS, false)
+                    BasicApiResponse<Unit>(USER_ALREADY_EXISTS, false)
                 )
                 return@post
             }
@@ -51,7 +51,7 @@ fun Route.createUser(
             when (userService.validateCreateAccountRequest(request)) {
                 is ValidationEvent.EmptyFieldError -> {
                     call.respond(
-                        BasicApiResponse(FIELDS_BLANK, false)
+                        BasicApiResponse<Unit>(FIELDS_BLANK, false)
                     )
                     return@post
                 }
@@ -60,7 +60,7 @@ fun Route.createUser(
                     userService.createUser(request)
                     call.respond(
                         OK,
-                        BasicApiResponse(successful = true)
+                        BasicApiResponse<Unit>(successful = true)
                     )
                 }
             }
@@ -77,7 +77,7 @@ fun Route.loginUser(
 
     route("/api/user/login") {
         post {
-            val request = call.receiveOrNull<LoginRequest>() ?: kotlin.run {
+            val request = call.receiveOrNull<LoginAccountRequest>() ?: kotlin.run {
                 call.respond(BadRequest)
                 return@post
             }
@@ -86,7 +86,7 @@ fun Route.loginUser(
 
                 is ValidationEvent.EmptyFieldError -> {
                     call.respond(
-                        BasicApiResponse(FIELDS_BLANK, false)
+                        BasicApiResponse<Unit>(FIELDS_BLANK, false)
                     )
                     return@post
                 }
@@ -96,12 +96,12 @@ fun Route.loginUser(
                     val user = userService.getUserByEmail(request.email) ?: kotlin.run {
                         call.respond(
                             OK,
-                            BasicApiResponse(message = INVALID_CREDENTIALS, successful = false)
+                            BasicApiResponse<Unit>(message = INVALID_CREDENTIALS, successful = false)
                         )
                         return@post
                     }
 
-                    if (userService.isPasswordCorrect(request.email, user.password)) {
+                    if (userService.isPasswordCorrect(user.email, request.password)) {
 
                         val expiresIn = 1000L * 60L * 60L * 24L * 365L //token expiruje za rok
 
@@ -114,12 +114,15 @@ fun Route.loginUser(
 
                         call.respond(
                             OK,
-                            AuthResponse(token = token)
+                            BasicApiResponse(
+                                successful = true,
+                                data = AuthResponse(token = token)
+                            )
                         )
                     } else {
                         call.respond(
                             OK,
-                            BasicApiResponse(message = INVALID_CREDENTIALS, successful = false)
+                            BasicApiResponse<Unit>(message = INVALID_CREDENTIALS, successful = false)
                         )
                     }
                 }
@@ -143,7 +146,7 @@ fun Route.getUserProfile(
                 val userProfile = userService.getUserProfile(userId)
                 if (userProfile == null) {
                     OK
-                    BasicApiResponse(
+                    BasicApiResponse<Unit>(
                         message = ApiResponseMessages.USER_NOT_FOUND,
                         successful = false
                     )
@@ -201,7 +204,7 @@ fun Route.updateUserProfile(
                     if(userUpdateAcknowledged){
                         call.respond(
                             OK,
-                            BasicApiResponse(
+                            BasicApiResponse<Unit>(
                                 successful = true
                             )
                         )
