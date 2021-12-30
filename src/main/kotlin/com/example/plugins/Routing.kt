@@ -26,7 +26,7 @@ fun Application.configureRouting() {
 
     routing {
 
-        //User Routes
+        //Auth Routes
         registerUser(userService)
         loginUser(
             userService = userService,
@@ -34,6 +34,9 @@ fun Application.configureRouting() {
             jwtAudience = jwtAudience,
             jwtSecret = jwtSecret
         )
+        authenticate()
+
+        //User Routes
         getUserProfile(userService)
         updateUserProfile(userService)
 
