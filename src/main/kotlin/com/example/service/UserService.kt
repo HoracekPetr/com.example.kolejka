@@ -28,6 +28,10 @@ class UserService(
         return userRepository.getUserByEmail(email)
     }
 
+    suspend fun getUsernameById(id: String): String? {
+        return userRepository.getUsernameById(id)
+    }
+
     suspend fun getUserProfile(userId: String): ProfileResponse? {
 
         val user = userRepository.getUserById(userId) ?: return null

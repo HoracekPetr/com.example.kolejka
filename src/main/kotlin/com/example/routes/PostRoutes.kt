@@ -10,6 +10,7 @@ import com.example.data.util.PostType
 import com.example.service.CommentService
 import com.example.service.NotificationService
 import com.example.service.PostService
+import com.example.service.UserService
 import com.example.util.Constants
 import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.Constants.POST_PIC_URL
@@ -28,7 +29,8 @@ import java.io.File
 import java.util.*
 
 fun Route.createPost(
-    postService: PostService
+    postService: PostService,
+    userService: UserService
 ) {
 
     val gson: Gson by inject()
@@ -59,12 +61,14 @@ fun Route.createPost(
 
                 val postPictureURL = "${POST_PIC_URL}/$fileName"
                 val userId = call.userId
+                val username = userService.getUsernameById(userId)
 
                 createPostRequest?.let { request ->
                     val postCreatedAcknowledged = postService.createPost(
                         request = request,
                         postPictureUrl = postPictureURL,
-                        userId = userId
+                        userId = userId,
+                        username = username ?: ""
                     )
 
                     if (postCreatedAcknowledged) {

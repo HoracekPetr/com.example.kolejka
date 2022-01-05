@@ -41,7 +41,7 @@ fun Application.configureRouting() {
         updateUserProfile(userService)
 
         //Post Routes
-        createPost(postService)
+        createPost(postService, userService)
         getPostsByAll(postService)
         getPostsByCreator(postService)
         getPostsWhereUserIsMember(postService)

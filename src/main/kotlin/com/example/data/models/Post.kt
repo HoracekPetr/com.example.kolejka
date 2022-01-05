@@ -8,6 +8,7 @@ data class Post(
     val id: String = ObjectId().toString(),
     val userId: String,
     val title: String,
+    val username: String,
     val description: String,
     val postPictureUrl: String,
     val members: List<String>,
