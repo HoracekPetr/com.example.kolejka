@@ -13,6 +13,6 @@ data class Post(
     val postPictureUrl: String,
     val members: List<String>,
     val available: Int,
-    val limit: Int,
+    val limit: Int?,
     val type: Int
 )
