@@ -37,6 +37,7 @@ class UserService(
         val user = userRepository.getUserById(userId) ?: return null
 
         return ProfileResponse(
+            userId = user.id,
             username = user.username,
             profilePictureUrl = user.profilePictureURL,
             bannerR = user.bannerR,

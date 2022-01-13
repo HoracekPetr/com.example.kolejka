@@ -36,8 +36,9 @@ fun Route.getUserProfile(
     authenticate {
         route("/api/user/profile") {
             get {
-                val userId = call.parameters[QueryParameters.USER_ID]
-                if (userId == null || userId.isBlank()) {
+                //val userId = call.parameters[QueryParameters.USER_ID]
+                val userId = call.userId
+                if (userId.isBlank()) {
                     BadRequest
                     return@get
                 }
@@ -54,7 +55,10 @@ fun Route.getUserProfile(
 
                 call.respond(
                     OK,
-                    userProfile
+                    BasicApiResponse(
+                        successful = true,
+                        data = userProfile
+                    )
                 )
             }
         }

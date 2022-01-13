@@ -162,12 +162,13 @@ fun Route.getPostsByCreator(
     authenticate {
         route("/api/post/getPostsByCreator") {
             get {
+                val userId = call.userId
                 val page = call.parameters[QueryParameters.PARAM_PAGE]?.toIntOrNull() ?: 0
                 val pageSize =
                     call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
 
                 val postsByCreator = postService.getPostsByCreator(
-                    userId = call.userId,
+                    userId = userId,
                     page = page,
                     pageSize = pageSize
                 )
@@ -186,12 +187,13 @@ fun Route.getPostsWhereUserIsMember(
     authenticate {
         route("/api/post/getPostsWhereMember") {
             get {
+                val userId = call.userId
                 val page = call.parameters[QueryParameters.PARAM_PAGE]?.toIntOrNull() ?: 0
                 val pageSize =
                     call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
 
                 val postsWhereUserIsMember = postService.getPostsWhereUserIsMember(
-                    userId = call.userId,
+                    userId = userId,
                     page = page,
                     pageSize = pageSize
                 )
