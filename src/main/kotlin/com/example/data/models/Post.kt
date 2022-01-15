@@ -14,5 +14,6 @@ data class Post(
     val members: List<String>,
     val available: Int,
     val limit: Int?,
-    val type: Int
+    val type: Int,
+    val profilePictureUrl: String?
 )

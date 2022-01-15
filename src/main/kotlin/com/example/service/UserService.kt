@@ -32,6 +32,10 @@ class UserService(
         return userRepository.getUsernameById(id)
     }
 
+    suspend fun getUserProfileUrl(userId: String): String? {
+        return userRepository.getUserProfileUrl(userId)
+    }
+
     suspend fun getUserProfile(userId: String): ProfileResponse? {
 
         val user = userRepository.getUserById(userId) ?: return null
@@ -63,9 +67,9 @@ class UserService(
 
     suspend fun updateUser(
         userId: String,
-        profilePictureUrl: String,
+        profilePictureUrl: String?,
         updateProfileRequest: UpdateProfileRequest
-    ): Boolean = userRepository.updateUser(userId, profilePictureUrl, updateProfileRequest)
+    ): Boolean = userRepository.updateUser(userId, profilePictureUrl , updateProfileRequest)
 
     fun validateCreateAccountRequest(request: RegisterAccountRequest): ValidationEvent {
         return if (request.email.isBlank() || request.password.isBlank() || request.username.isBlank()) {

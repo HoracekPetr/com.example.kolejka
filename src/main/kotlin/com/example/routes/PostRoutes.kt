@@ -63,13 +63,15 @@ fun Route.createPost(
                 val postPictureURL = "${POST_PIC_URL}/$fileName"
                 val userId = call.userId
                 val username = userService.getUsernameById(userId)
+                val profilePictureUrl = userService.getUserProfileUrl(userId)
 
                 createPostRequest?.let { request ->
                     val postCreatedAcknowledged = postService.createPost(
                         request = request,
                         postPictureUrl = postPictureURL,
                         userId = userId,
-                        username = username ?: ""
+                        username = username ?: "",
+                        profilePictureUrl = profilePictureUrl ?: ""
                     )
 
                     if (postCreatedAcknowledged) {

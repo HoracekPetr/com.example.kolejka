@@ -27,9 +27,13 @@ class UserRepositoryImpl(
         return users.findOne(User::email eq email)
     }
 
+    override suspend fun getUserProfileUrl(userId: String): String? {
+        return users.findOneById(userId)?.profilePictureURL
+    }
+
     override suspend fun updateUser(
         userId: String,
-        profilePictureUrl: String,
+        profilePictureUrl: String?,
         updateProfileRequest: UpdateProfileRequest
     ): Boolean {
         val user = getUserById(userId) ?: return false
@@ -39,7 +43,7 @@ class UserRepositoryImpl(
                 email = user.email,
                 username = updateProfileRequest.username,
                 password = user.password,
-                profilePictureURL = profilePictureUrl,
+                profilePictureURL = profilePictureUrl ?: user.profilePictureURL,
                 bannerR = updateProfileRequest.bannerR,
                 bannerG = updateProfileRequest.bannerG,
                 bannerB = updateProfileRequest.bannerB,

@@ -13,7 +13,9 @@ interface UserRepository {
 
     suspend fun getUserByEmail(email: String): User?
 
-    suspend fun updateUser(userId: String, profilePictureUrl: String, updateProfileRequest: UpdateProfileRequest): Boolean
+    suspend fun getUserProfileUrl(userId: String): String?
+
+    suspend fun updateUser(userId: String, profilePictureUrl: String?, updateProfileRequest: UpdateProfileRequest): Boolean
 
     suspend fun doesPasswordForUserMatch(email: String, password: String): Boolean
 

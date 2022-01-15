@@ -87,7 +87,9 @@ fun Route.updateUserProfile(
                         }
 
                         is PartData.FileItem -> {
-                            fileName = part.save(PROFILE_PIC_PATH)
+                            if (part.name == "update_profile_image") {
+                                fileName = part.save(PROFILE_PIC_PATH)
+                            }
                         }
 
                         is PartData.BinaryItem -> Unit
@@ -101,10 +103,14 @@ fun Route.updateUserProfile(
                 updateProfileRequest?.let { request ->
                     val userUpdateAcknowledged = userService.updateUser(
                         userId = call.userId,
-                        profilePictureUrl = profilePictureUrl,
+                        profilePictureUrl = if (fileName == null) {
+                            null
+                        } else {
+                            profilePictureUrl
+                        },
                         updateProfileRequest = request
                     )
-                    if(userUpdateAcknowledged){
+                    if (userUpdateAcknowledged) {
                         call.respond(
                             OK,
                             BasicApiResponse<Unit>(
@@ -117,7 +123,7 @@ fun Route.updateUserProfile(
                             InternalServerError
                         )
                     }
-                } ?: kotlin.run{
+                } ?: kotlin.run {
                     call.respond(BadRequest)
                     return@put
                 }
