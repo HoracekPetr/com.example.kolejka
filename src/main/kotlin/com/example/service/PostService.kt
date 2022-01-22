@@ -43,4 +43,6 @@ class PostService(
     suspend fun isPostMember(postId: String, userId: String): Boolean = postRepository.isPostMember(postId, userId)
 
     suspend fun getPostById(postId: String): Post? = postRepository.getPostById(postId)
+
+    suspend fun updatePostsProfilePic(userId: String): Boolean = postRepository.updatePostsInfo(userId)
 }

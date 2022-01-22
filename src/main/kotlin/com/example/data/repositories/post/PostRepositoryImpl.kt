@@ -1,6 +1,7 @@
 package com.example.data.repositories.post
 
 import com.example.data.models.Post
+import com.example.data.models.User
 import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
 
@@ -9,7 +10,7 @@ class PostRepositoryImpl(
 ) : PostRepository {
 
     private val posts = db.getCollection<Post>()
-
+    private val users = db.getCollection<User>()
 
     override suspend fun createPost(post: Post): Boolean {
         return posts.insertOne(post).wasAcknowledged()
@@ -22,6 +23,14 @@ class PostRepositoryImpl(
 
     override suspend fun getPostsByAll(page: Int, pageSize: Int): List<Post> {
         return posts.find().skip(page * pageSize).limit(pageSize).toList()
+    }
+
+    override suspend fun updatePostsInfo(userId: String): Boolean {
+        return posts.updateMany(filter = Post::userId eq userId,
+            updates = arrayOf(
+                SetTo(Post::profilePictureUrl, users.findOneById(userId)?.profilePictureURL),
+                SetTo(Post::username, users.findOneById(userId)?.username)
+            )).wasAcknowledged()
     }
 
     override suspend fun getPostsWhereUserIsMember(userId: String, page: Int, pageSize: Int): List<Post> {

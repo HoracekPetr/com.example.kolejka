@@ -14,6 +14,8 @@ interface PostRepository {
 
     suspend fun getPostById(postId: String): Post?
 
+    suspend fun updatePostsInfo(userId: String): Boolean
+
     suspend fun getPostsWhereUserIsMember(
         userId: String, page: Int = 0,
         pageSize: Int = POSTS_PAGE_SIZE

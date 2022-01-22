@@ -7,6 +7,7 @@ import com.example.data.requests.LoginAccountRequest
 import com.example.data.requests.UpdateProfileRequest
 import com.example.data.responses.AuthResponse
 import com.example.data.responses.BasicApiResponse
+import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
 import com.example.util.ApiResponseMessages.FIELDS_BLANK
@@ -66,7 +67,8 @@ fun Route.getUserProfile(
 }
 
 fun Route.updateUserProfile(
-    userService: UserService
+    userService: UserService,
+    postService: PostService
 ) {
 
     val gson: Gson by inject()
@@ -111,6 +113,7 @@ fun Route.updateUserProfile(
                         updateProfileRequest = request
                     )
                     if (userUpdateAcknowledged) {
+                        postService.updatePostsProfilePic(call.userId)
                         call.respond(
                             OK,
                             BasicApiResponse<Unit>(
