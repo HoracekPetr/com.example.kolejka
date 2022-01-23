@@ -1,5 +1,6 @@
 package com.example.routes
 
+import com.example.data.models.Post
 import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeletePostRequest
@@ -12,6 +13,7 @@ import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
+import com.example.util.ApiResponseMessages.POST_NOT_FOUND
 import com.example.util.Constants
 import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.Constants.POST_PIC_URL
@@ -115,7 +117,33 @@ fun Route.getPostsByAll(
             }
         }
     }
+}
 
+fun Route.getPostById(
+    postService: PostService
+){
+    authenticate{
+        route("/api/post/get"){
+            get {
+                val postId = call.parameters[QueryParameters.PARAM_POST_ID]
+                if(postId == null){
+                    call.respond(
+                        status = HttpStatusCode.NotFound,
+                        message = BasicApiResponse<Unit>(message = POST_NOT_FOUND, successful = false)
+                    )
+                } else {
+                    val post = postService.getPostById(postId)
+                    call.respond(
+                        status = HttpStatusCode.OK,
+                        message = BasicApiResponse(
+                            successful = true,
+                            data = post
+                        )
+                    )
+                }
+            }
+        }
+    }
 }
 
 fun Route.deletePost(

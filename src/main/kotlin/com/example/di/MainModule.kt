@@ -50,7 +50,7 @@ val mainModule = module {
     }
 
     single{
-        CommentService(get())
+        CommentService(get(), get())
     }
 
     single {

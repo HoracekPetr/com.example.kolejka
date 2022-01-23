@@ -7,6 +7,7 @@ import com.example.service.CommentService
 import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.util.ApiResponseMessages
+import com.example.util.ApiResponseMessages.COMMENTS_NOT_FOUND
 import com.example.util.validation.CommentValidationEvent
 import com.example.util.QueryParameters
 import io.ktor.application.*
@@ -93,13 +94,20 @@ fun Route.getCommentsForPost(
             get {
                 val postId = call.parameters[QueryParameters.PARAM_POST_ID] ?: kotlin.run {
                     call.respond(
-                        HttpStatusCode.BadRequest
+                        HttpStatusCode.BadRequest,
+                        BasicApiResponse<Unit>(
+                            message = COMMENTS_NOT_FOUND,
+                            successful = false
+                        )
                     )
                     return@get
                 }
 
                 val comments = commentService.getCommentsForPost(postId)
-                call.respond(HttpStatusCode.OK, comments)
+                call.respond(HttpStatusCode.OK, BasicApiResponse(
+                    successful = true,
+                    data = comments
+                ))
             }
         }
     }

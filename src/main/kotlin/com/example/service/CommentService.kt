@@ -7,7 +7,8 @@ import com.example.util.validation.CommentValidationEvent
 import com.example.util.Constants
 
 class CommentService(
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val userService: UserService
 ) {
 
     suspend fun createComment(createCommentRequest: CreateCommentRequest, userId: String): CommentValidationEvent {
@@ -25,7 +26,9 @@ class CommentService(
                 userId = userId,
                 postId = createCommentRequest.postId,
                 comment = createCommentRequest.comment,
-                timestamp = System.currentTimeMillis()
+                timestamp = System.currentTimeMillis(),
+                username = userService.getUsernameById(userId) ?: "",
+                profilePictureUrl = userService.getUserProfileUrl(userId) ?: ""
             )
         )
 
