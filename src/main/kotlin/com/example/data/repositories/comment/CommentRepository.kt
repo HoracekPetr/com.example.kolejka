@@ -4,7 +4,7 @@ import com.example.data.models.Comment
 
 interface CommentRepository {
 
-    suspend fun createComment(comment: Comment): String
+    suspend fun createComment(comment: Comment): Boolean
 
     suspend fun deleteComment(commentId: String): Boolean
 

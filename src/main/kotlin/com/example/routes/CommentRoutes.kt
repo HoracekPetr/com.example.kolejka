@@ -37,6 +37,7 @@ fun Route.createComment(
 
                 if (call.userId in post.members) {
                     when (commentService.createComment(request, call.userId)) {
+
                         is CommentValidationEvent.EmptyFieldError -> {
                             call.respond(
                                 HttpStatusCode.OK,

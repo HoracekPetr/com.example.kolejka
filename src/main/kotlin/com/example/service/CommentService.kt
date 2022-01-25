@@ -14,10 +14,10 @@ class CommentService(
     suspend fun createComment(createCommentRequest: CreateCommentRequest, userId: String): CommentValidationEvent {
         createCommentRequest.apply {
             if (comment.isBlank() || postId.isBlank()) {
-                CommentValidationEvent.EmptyFieldError
+                return CommentValidationEvent.EmptyFieldError
             }
             if(comment.length > Constants.MAX_COMMENT_LENGTH){
-                CommentValidationEvent.CommentTooLong
+                return CommentValidationEvent.CommentTooLong
             }
         }
 
