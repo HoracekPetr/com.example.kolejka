@@ -6,6 +6,7 @@ import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.DeletePostRequest
 import com.example.data.requests.UpdateProfileRequest
 import com.example.data.responses.BasicApiResponse
+import com.example.data.responses.PostDetailResponse
 import com.example.data.util.NotificationAction
 import com.example.data.util.PostType
 import com.example.service.CommentService
@@ -121,12 +122,12 @@ fun Route.getPostsByAll(
 
 fun Route.getPostById(
     postService: PostService
-){
-    authenticate{
-        route("/api/post/get"){
+) {
+    authenticate {
+        route("/api/post/get") {
             get {
                 val postId = call.parameters[QueryParameters.PARAM_POST_ID]
-                if(postId == null){
+                if (postId == null) {
                     call.respond(
                         status = HttpStatusCode.NotFound,
                         message = BasicApiResponse<Unit>(message = POST_NOT_FOUND, successful = false)
@@ -135,9 +136,13 @@ fun Route.getPostById(
                     val post = postService.getPostById(postId)
                     call.respond(
                         status = HttpStatusCode.OK,
-                        message = BasicApiResponse(
+/*                        message = BasicApiResponse(
                             successful = true,
                             data = post
+                        )*/
+                        message = BasicApiResponse<PostDetailResponse>(
+                            successful = true,
+                            data = PostDetailResponse(post = post, requesterId = call.userId)
                         )
                     )
                 }
@@ -248,15 +253,15 @@ fun Route.addPostMember(
                     return@post
                 }
 
-                val post = postService.getPost(request.postId)
+                val post = postService.getPost(request.postId ?: "")
 
                 if (post != null) {
-                    if (!postService.isPostMember(request.postId, call.userId)) {
-                        if (postService.addPostMember(request.postId, call.userId)) {
+                    if (!postService.isPostMember(request.postId ?: "", call.userId)) {
+                        if (postService.addPostMember(request.postId ?: "", call.userId)) {
 
                             notificationService.addPostNotification(
                                 byUserId = call.userId,
-                                postId = request.postId,
+                                postId = request.postId ?: "",
                                 postType = PostType.fromType(post.type)
                             )
 
@@ -278,7 +283,7 @@ fun Route.addPostMember(
                                 )
                             )
                         }
-                    } else if (postService.isPostMember(request.postId, call.userId) && post.userId == call.userId) {
+                    } else if (postService.isPostMember(request.postId ?: "", call.userId) && post.userId == call.userId) {
                         call.respond(
                             HttpStatusCode.Conflict,
                             BasicApiResponse<Unit>(
@@ -287,7 +292,7 @@ fun Route.addPostMember(
                             )
                         )
                     } else {
-                        postService.removePostMember(request.postId, call.userId)
+                        postService.removePostMember(request.postId ?: "", call.userId)
                         call.respond(
                             HttpStatusCode.OK,
                             BasicApiResponse<Unit>(
