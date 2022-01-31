@@ -1,5 +1,6 @@
 package com.example.routes
 
+import com.example.data.responses.BasicApiResponse
 import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.util.Constants
@@ -20,9 +21,10 @@ fun Route.getNotificationsForUser(
                 val pageSize =
                     call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
 
-                val notificationsForUser = notificationService.getNotificationsForUser(call.userId,page, pageSize)
+                val notificationsForUser = notificationService.getNotificationsForUser(call.userId, page, pageSize)
                 call.respond(
-                    HttpStatusCode.OK, notificationsForUser
+                    HttpStatusCode.OK,
+                    notificationsForUser
                 )
             }
         }

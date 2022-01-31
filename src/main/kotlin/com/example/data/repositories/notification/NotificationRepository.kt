@@ -1,13 +1,14 @@
 package com.example.data.repositories.notification
 
 import com.example.data.models.Notification
+import com.example.data.responses.NotificationResponse
 import com.example.util.Constants
 
 interface NotificationRepository {
 
     suspend fun getNotificationsForUser(
         userId: String, page: Int = 0, pageSize: Int = Constants.NOTIFICATIONS_PAGE_SIZE
-    ): List<Notification>
+    ): List<NotificationResponse>
 
     suspend fun createNotification(notification: Notification): Boolean
 

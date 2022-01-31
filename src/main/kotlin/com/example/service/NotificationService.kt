@@ -4,15 +4,18 @@ import com.example.data.models.Notification
 import com.example.data.repositories.comment.CommentRepository
 import com.example.data.repositories.notification.NotificationRepository
 import com.example.data.repositories.post.PostRepository
+import com.example.data.repositories.user.UserRepository
+import com.example.data.responses.NotificationResponse
 import com.example.data.util.NotificationAction
 import com.example.data.util.PostType
 
 class NotificationService(
     private val notificationRepository: NotificationRepository,
     private val postRepository: PostRepository,
-    private val commentRepository: CommentRepository
+    private val userRepository: UserRepository,
+    //private val commentRepository: CommentRepository
 ) {
-    suspend fun getNotificationsForUser(userId: String, page: Int, pageSize: Int): List<Notification> =
+    suspend fun getNotificationsForUser(userId: String, page: Int, pageSize: Int): List<NotificationResponse> =
         notificationRepository.getNotificationsForUser(userId, page, pageSize)
 
     suspend fun createNotification(notification: Notification) = notificationRepository.createNotification(notification)
@@ -26,16 +29,35 @@ class NotificationService(
         postType: PostType
     ) : Boolean {
         val toUserId = postRepository.getPostById(postId)?.userId ?: return false
+        val username = userRepository.getUsernameById(byUserId) ?: ""
 
-        return notificationRepository.createNotification(
-            Notification(
-                byUserID = byUserId,
-                toUserID = toUserId,
-                parentID = postId,
-                timestamp = System.currentTimeMillis(),
-                type = postType.type
-            )
-        )
+        when (postType) {
+            PostType.Event -> {
+                return notificationRepository.createNotification(
+                    Notification(
+                        byUserID = byUserId,
+                        toUserID = toUserId,
+                        parentID = postId,
+                        timestamp = System.currentTimeMillis(),
+                        type = NotificationAction.JoinedEvent.type,
+                        username = username
+                    )
+                )
+            }
+            PostType.Offer -> {
+                return notificationRepository.createNotification(
+                    Notification(
+                        byUserID = byUserId,
+                        toUserID = toUserId,
+                        parentID = postId,
+                        timestamp = System.currentTimeMillis(),
+                        type = NotificationAction.CalledDibs.type,
+                        username = username
+                    )
+                )
+            }
+            else -> return false
+        }
     }
 
     suspend fun addCommentNotification(
@@ -44,6 +66,7 @@ class NotificationService(
     ): Boolean{
 
         val toUserId = postRepository.getPostById(postId)?.userId ?: return false
+        val username = userRepository.getUsernameById(byUserId) ?: ""
 
         return notificationRepository.createNotification(
             Notification(
@@ -51,7 +74,8 @@ class NotificationService(
                 toUserID = toUserId,
                 timestamp = System.currentTimeMillis(),
                 type = NotificationAction.CommentedOn.type,
-                parentID = postId
+                parentID = postId,
+                username = username
             )
         )
     }

@@ -1,6 +1,5 @@
 package com.example.data.util
 
-import com.example.data.models.Post
 
 sealed class PostType(val type: Int) {
     object Event : PostType(0)

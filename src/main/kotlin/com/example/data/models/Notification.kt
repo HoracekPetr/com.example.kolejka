@@ -7,6 +7,7 @@ import org.bson.types.ObjectId
 data class Notification(
     @BsonId
     val id: String = ObjectId().toString(),
+    val username: String,
     val byUserID: String,
     val toUserID: String,
     val parentID: String,
