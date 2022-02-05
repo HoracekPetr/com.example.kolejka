@@ -1,6 +1,7 @@
 package com.example.service
 
 import com.example.data.models.Notification
+import com.example.data.models.NotificationCount
 import com.example.data.repositories.comment.CommentRepository
 import com.example.data.repositories.notification.NotificationRepository
 import com.example.data.repositories.post.PostRepository
@@ -78,5 +79,12 @@ class NotificationService(
                 username = username
             )
         )
+    }
+
+    suspend fun getNotificationCount(userId: String): Int = notificationRepository.getNotificationCount(userId)
+
+    suspend fun updateNotificationCount(postId: String): Boolean {
+        val toUserId = postRepository.getPostById(postId)?.userId ?: return false
+        return notificationRepository.updateNotificationCount(toUserId, NotificationCount(userId = toUserId, count = 0))
     }
 }

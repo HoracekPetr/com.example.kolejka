@@ -1,25 +1,20 @@
 package com.example.routes
 
-import com.example.data.models.Post
 import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
-import com.example.data.requests.DeletePostRequest
-import com.example.data.requests.UpdateProfileRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.data.responses.PostDetailResponse
-import com.example.data.util.NotificationAction
 import com.example.data.util.PostType
 import com.example.service.CommentService
 import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
-import com.example.util.ApiResponseMessages
 import com.example.util.ApiResponseMessages.POST_NOT_FOUND
 import com.example.util.Constants
 import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.Constants.POST_PIC_URL
-import com.example.util.Constants.PROFILE_PIC_URL
 import com.example.util.QueryParameters
+import com.example.util.QueryParameters.POST_ID
 import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -30,7 +25,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 import java.io.File
-import java.util.*
 
 fun Route.createPost(
     postService: PostService,
@@ -158,12 +152,12 @@ fun Route.deletePost(
     authenticate {
         route("/api/post/delete") {
             delete {
-                val request = call.receiveOrNull<DeletePostRequest>() ?: kotlin.run {
+                val postId = call.parameters[POST_ID] ?: kotlin.run {
                     call.respond(HttpStatusCode.BadRequest)
                     return@delete
                 }
 
-                val post = postService.getPost(request.postId)
+                val post = postService.getPost(postId)
 
                 if (post == null) {
                     call.respond(HttpStatusCode.NotFound)
@@ -172,8 +166,8 @@ fun Route.deletePost(
 
                 if (post.userId == call.userId) {
 
-                    postService.deletePost(request.postId)
-                    commentService.deleteCommentsForPost(request.postId)
+                    postService.deletePost(postId)
+                    commentService.deleteCommentsForPost(postId)
 
                     call.respond(
                         HttpStatusCode.OK,
@@ -263,6 +257,10 @@ fun Route.addPostMember(
                                 byUserId = call.userId,
                                 postId = request.postId ?: "",
                                 postType = PostType.fromType(post.type)
+                            )
+
+                            notificationService.updateNotificationCount(
+                                postId = request.postId ?: ""
                             )
 
 

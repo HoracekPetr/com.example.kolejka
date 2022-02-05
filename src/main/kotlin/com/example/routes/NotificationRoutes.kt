@@ -30,3 +30,23 @@ fun Route.getNotificationsForUser(
         }
     }
 }
+
+fun Route.getNotificationCount(
+    notificationService: NotificationService
+) {
+    authenticate{
+        route("/api/notifications/getCount") {
+            get {
+                val userId = call.userId
+                println("USERID: ${call.userId}")
+
+                val notificationCount = notificationService.getNotificationCount(userId)
+
+                call.respond(
+                    HttpStatusCode.OK,
+                    notificationCount
+                )
+            }
+        }
+    }
+}
