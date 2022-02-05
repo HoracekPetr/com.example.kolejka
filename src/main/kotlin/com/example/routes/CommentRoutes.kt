@@ -1,7 +1,6 @@
 package com.example.routes
 
 import com.example.data.requests.CreateCommentRequest
-import com.example.data.requests.DeleteCommentRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.service.CommentService
 import com.example.service.NotificationService
@@ -10,6 +9,7 @@ import com.example.util.ApiResponseMessages
 import com.example.util.ApiResponseMessages.COMMENTS_NOT_FOUND
 import com.example.util.validation.CommentValidationEvent
 import com.example.util.QueryParameters
+import com.example.util.QueryParameters.COMMENT_ID
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
@@ -120,12 +120,12 @@ fun Route.deleteComment(
     authenticate {
         route("/api/comment/delete") {
             delete {
-                val request = call.receiveOrNull<DeleteCommentRequest>() ?: kotlin.run {
+                val commentId = call.parameters[COMMENT_ID] ?: kotlin.run {
                     call.respond(HttpStatusCode.BadRequest)
                     return@delete
                 }
 
-                val comment = commentService.getComment(request.commentId)
+                val comment = commentService.getComment(commentId)
 
                 if (comment == null) {
                     call.respond(HttpStatusCode.NotFound)
@@ -133,7 +133,7 @@ fun Route.deleteComment(
                 }
 
                 if (comment.userId == call.userId) {
-                    commentService.deleteComment(request.commentId)
+                    commentService.deleteComment(commentId)
 
                     call.respond(
                         HttpStatusCode.OK,

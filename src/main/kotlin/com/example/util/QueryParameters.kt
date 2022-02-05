@@ -6,4 +6,5 @@ object QueryParameters {
     const val PARAM_POST_ID = "postId"
     const val USER_ID = "userId"
     const val POST_ID = "postId"
+    const val COMMENT_ID = "commentId"
 }
