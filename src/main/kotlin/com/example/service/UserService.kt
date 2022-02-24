@@ -6,6 +6,7 @@ import com.example.data.requests.RegisterAccountRequest
 import com.example.data.requests.LoginAccountRequest
 import com.example.data.requests.UpdateProfileRequest
 import com.example.data.responses.ProfileResponse
+import com.example.util.Constants.DEFAULT_AVATAR_URL
 import com.example.util.validation.ValidationEvent
 
 class UserService(
@@ -60,7 +61,7 @@ class UserService(
                 email = request.email,
                 username = request.username,
                 password = request.password,
-                profilePictureURL = ""
+                profilePictureURL = DEFAULT_AVATAR_URL
             )
         )
     }

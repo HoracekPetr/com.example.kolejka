@@ -11,4 +11,6 @@ object Constants {
 
     const val POST_PIC_PATH = "build/resources/main/static/post_pictures"
     const val POST_PIC_URL = "http://10.0.2.2:8001/post_pictures"
+
+    const val DEFAULT_AVATAR_URL = "http://10.0.2.2:8001/profile_pictures/default_profile_pic.png"
 }
