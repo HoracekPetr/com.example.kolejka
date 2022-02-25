@@ -22,7 +22,9 @@ class PostRepositoryImpl(
     }
 
     override suspend fun getPostsByAll(page: Int, pageSize: Int): List<Post> {
-        return posts.find().skip(page * pageSize).limit(pageSize).toList()
+
+        return posts.find(Post::available gt 0).skip(page * pageSize).limit(pageSize).toList()
+
     }
 
     override suspend fun updatePostsInfo(userId: String): Boolean {
@@ -53,11 +55,13 @@ class PostRepositoryImpl(
 
     override suspend fun addPostMember(postId: String, userId: String): Boolean {
         val postMembers = posts.findOneById(postId)?.members ?: return false
+        posts.updateOneById(postId, inc(Post::available, -1))
         return posts.updateOneById(postId, setValue(Post::members, postMembers + userId)).wasAcknowledged()
     }
 
     override suspend fun removePostMember(postId: String, userId: String): Boolean {
         val postMembers = posts.findOneById(postId)?.members ?: return false
+        posts.updateOneById(postId, inc(Post::available, 1))
         return posts.updateOneById(postId, setValue(Post::members, postMembers - userId)).wasAcknowledged()
     }
 

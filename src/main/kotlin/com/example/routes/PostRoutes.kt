@@ -28,10 +28,11 @@ import java.io.File
 
 fun Route.createPost(
     postService: PostService,
-    userService: UserService
+    userService: UserService,
 ) {
 
     val gson: Gson by inject()
+
 
     authenticate {
         route("/api/post/create") {
@@ -237,7 +238,8 @@ fun Route.getPostsWhereUserIsMember(
 
 fun Route.addPostMember(
     postService: PostService,
-    notificationService: NotificationService
+    notificationService: NotificationService,
+    commentService: CommentService
 ) {
     authenticate {
         route("/api/post/addPostMember") {
@@ -290,7 +292,11 @@ fun Route.addPostMember(
                             )
                         )
                     } else {
+
                         postService.removePostMember(request.postId ?: "", call.userId)
+                        commentService.deleteCommentsFromUser(postId = post.id, userId = call.userId)
+
+
                         call.respond(
                             HttpStatusCode.OK,
                             BasicApiResponse<Unit>(
@@ -298,6 +304,7 @@ fun Route.addPostMember(
                                 successful = true
                             )
                         )
+
                     }
                 } else {
                     call.respond(HttpStatusCode.BadRequest)

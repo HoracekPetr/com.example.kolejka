@@ -10,6 +10,8 @@ interface CommentRepository {
 
     suspend fun deleteCommentsForPost(postId: String)
 
+    suspend fun deleteCommentsFromUser(userId: String, postId: String)
+
     suspend fun getCommentsForPost(postId: String): List<Comment>
 
     suspend fun getComment(commentId: String): Comment?

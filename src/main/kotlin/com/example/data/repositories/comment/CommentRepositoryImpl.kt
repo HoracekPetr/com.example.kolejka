@@ -22,6 +22,10 @@ class CommentRepositoryImpl(
         comments.deleteMany(Comment::postId eq postId)
     }
 
+    override suspend fun deleteCommentsFromUser(userId: String, postId: String) {
+        comments.deleteMany(Comment::postId eq postId, Comment::userId eq userId)
+    }
+
     override suspend fun getCommentsForPost(postId: String): List<Comment> {
         return comments.find(Comment::postId eq postId).toList()
     }

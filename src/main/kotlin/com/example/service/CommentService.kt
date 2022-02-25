@@ -43,6 +43,7 @@ class CommentService(
 
     suspend fun deleteComment(commentId: String): Boolean = commentRepository.deleteComment(commentId)
 
+    suspend fun deleteCommentsFromUser(postId: String, userId: String) = commentRepository.deleteCommentsFromUser(userId, postId)
 
     suspend fun getComment(commentId: String): Comment? = commentRepository.getComment(commentId)
 
