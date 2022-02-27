@@ -20,7 +20,9 @@ class PostService(
                 available = request.limit,
                 members = mutableListOf(userId),
                 type = request.type,
-                profilePictureUrl = profilePictureUrl
+                profilePictureUrl = profilePictureUrl,
+                date = request.date,
+                location = request.location
             )
         )
     }

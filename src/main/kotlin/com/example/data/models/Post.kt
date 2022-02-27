@@ -15,5 +15,7 @@ data class Post(
     val available: Int,
     val limit: Int?,
     val type: Int,
-    val profilePictureUrl: String?
+    val profilePictureUrl: String?,
+    val date: String?,
+    val location: String?
 )
