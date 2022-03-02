@@ -21,7 +21,7 @@ import org.litote.kmongo.reactivestreams.KMongo
 
 val mainModule = module {
     single {
-        val client = KMongo.createClient().coroutine
+        val client = KMongo.createClient(System.getenv("MONGO_URI")).coroutine
         client.getDatabase(DATABASE_NAME)
     }
 

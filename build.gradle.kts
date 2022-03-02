@@ -39,3 +39,7 @@ dependencies {
     // SLF4J Logger
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
 }
+
+tasks.create("stage") {
+    dependsOn("installDist")
+}
