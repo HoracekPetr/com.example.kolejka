@@ -13,6 +13,7 @@ import com.example.util.ApiResponseMessages
 import com.example.util.ApiResponseMessages.FIELDS_BLANK
 import com.example.util.ApiResponseMessages.INVALID_CREDENTIALS
 import com.example.util.ApiResponseMessages.USER_ALREADY_EXISTS
+import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.PROFILE_PIC_PATH
 import com.example.util.Constants.PROFILE_PIC_URL
 import com.example.util.QueryParameters
@@ -100,7 +101,7 @@ fun Route.updateUserProfile(
                 }
 
 
-                val profilePictureUrl = "${PROFILE_PIC_URL}/$fileName"
+                val profilePictureUrl = "$BASE_URL/post_pictures/$fileName"
 
                 updateProfileRequest?.let { request ->
                     val userUpdateAcknowledged = userService.updateUser(

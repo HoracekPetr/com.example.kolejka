@@ -11,6 +11,7 @@ import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages.POST_NOT_FOUND
 import com.example.util.Constants
+import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.Constants.POST_PIC_URL
 import com.example.util.QueryParameters
@@ -61,7 +62,7 @@ fun Route.createPost(
                     part.dispose
                 }
 
-                val postPictureURL = "${POST_PIC_URL}/$fileName"
+                val postPictureURL = "$BASE_URL/post_pictures/$fileName"
                 val userId = call.userId
                 val username = userService.getUsernameById(userId)
                 val profilePictureUrl = userService.getUserProfileUrl(userId)
