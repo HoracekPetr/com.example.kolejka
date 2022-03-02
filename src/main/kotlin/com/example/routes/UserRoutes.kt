@@ -15,7 +15,6 @@ import com.example.util.ApiResponseMessages.INVALID_CREDENTIALS
 import com.example.util.ApiResponseMessages.USER_ALREADY_EXISTS
 import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.PROFILE_PIC_PATH
-import com.example.util.Constants.PROFILE_PIC_URL
 import com.example.util.QueryParameters
 import com.example.util.validation.ValidationEvent
 import com.google.gson.Gson

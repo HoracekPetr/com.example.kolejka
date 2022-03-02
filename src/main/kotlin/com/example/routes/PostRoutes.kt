@@ -13,7 +13,6 @@ import com.example.util.ApiResponseMessages.POST_NOT_FOUND
 import com.example.util.Constants
 import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.POST_PIC_PATH
-import com.example.util.Constants.POST_PIC_URL
 import com.example.util.QueryParameters
 import com.example.util.QueryParameters.POST_ID
 import com.google.gson.Gson

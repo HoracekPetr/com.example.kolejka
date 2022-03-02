@@ -6,9 +6,9 @@ object Constants {
     const val NOTIFICATIONS_PAGE_SIZE = 15
     const val MAX_COMMENT_LENGTH = 500
 
-    const val BASE_URL = "http://10.0.2.2:8001"
+    const val BASE_URL = "https://kolejka-app.herokuapp.com"
     const val PROFILE_PIC_PATH = "build/resources/main/static/profile_pictures"
     const val POST_PIC_PATH = "build/resources/main/static/post_pictures"
 
-    const val DEFAULT_AVATAR_URL = "http://10.0.2.2:8001/profile_pictures/default_profile_pic.png"
+    const val DEFAULT_AVATAR_URL = "$BASE_URL/profile_pictures/default_profile_pic.png"
 }
