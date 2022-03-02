@@ -50,7 +50,7 @@ fun Route.createPost(
                         }
 
                         is PartData.FileItem -> {
-                            fileName = part.save(POST_PIC_PATH)
+                            fileName = part.save(POST_PIC_URL)
                         }
 
                         is PartData.BinaryItem -> Unit
