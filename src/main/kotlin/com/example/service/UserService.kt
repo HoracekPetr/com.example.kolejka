@@ -67,12 +67,6 @@ class UserService(
         )
     }
 
-    suspend fun updateUser(
-        userId: String,
-        profilePictureUrl: String?,
-        updateProfileRequest: UpdateProfileRequest
-    ): Boolean = userRepository.updateUser(userId, profilePictureUrl , updateProfileRequest)
-
     suspend fun updateUserInfo(
         userId: String,
         updateUserRequest: UpdateUserRequest

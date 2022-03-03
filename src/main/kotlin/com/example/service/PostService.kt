@@ -9,25 +9,6 @@ class PostService(
     private val postRepository: PostRepository
 ) {
 
-    suspend fun createPost(request: CreatePostRequest, postPictureUrl: String, userId: String, username: String, profilePictureUrl: String): Boolean{
-        return postRepository.createPost(
-            Post(
-                userId = userId,
-                title = request.title,
-                username = username,
-                description = request.description,
-                postPictureUrl = postPictureUrl,
-                limit = request.limit,
-                available = request.limit,
-                members = mutableListOf(userId),
-                type = request.type,
-                profilePictureUrl = profilePictureUrl,
-                date = request.date,
-                location = request.location
-            )
-        )
-    }
-
     suspend fun  createNewPost(request: NewPostRequest, userId: String, username: String, profilePictureUrl: String): Boolean{
         return postRepository.createPost(
             Post(

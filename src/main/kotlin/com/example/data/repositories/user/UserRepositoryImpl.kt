@@ -32,27 +32,6 @@ class UserRepositoryImpl(
         return users.findOneById(userId)?.profilePictureURL
     }
 
-    override suspend fun updateUser(
-        userId: String,
-        profilePictureUrl: String?,
-        updateProfileRequest: UpdateProfileRequest
-    ): Boolean {
-        val user = getUserById(userId) ?: return false
-        return users.updateOneById(
-            id = user.id,
-            update = User(
-                email = user.email,
-                username = updateProfileRequest.username,
-                password = user.password,
-                profilePictureURL = profilePictureUrl ?: user.profilePictureURL,
-                bannerR = updateProfileRequest.bannerR,
-                bannerG = updateProfileRequest.bannerG,
-                bannerB = updateProfileRequest.bannerB,
-                id = user.id
-            )
-        ).wasAcknowledged()
-    }
-
     override suspend fun updateUserInfo(userId: String, updateProfileRequest: UpdateUserRequest): Boolean {
         val user = getUserById(userId) ?: return false
         return users.updateOneById(
