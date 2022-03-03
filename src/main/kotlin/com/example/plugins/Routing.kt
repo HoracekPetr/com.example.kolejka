@@ -42,6 +42,8 @@ fun Application.configureRouting() {
 
         //Post Routes
         createPost(postService, userService)
+        createNewPost(postService, userService)
+
         getPostById(postService)
         getPostsByAll(postService)
         getPostsByCreator(postService)

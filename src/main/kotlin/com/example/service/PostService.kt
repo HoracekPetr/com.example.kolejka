@@ -3,6 +3,7 @@ package com.example.service
 import com.example.data.models.Post
 import com.example.data.repositories.post.PostRepository
 import com.example.data.requests.CreatePostRequest
+import com.example.data.requests.NewPostRequest
 
 class PostService(
     private val postRepository: PostRepository
@@ -26,6 +27,26 @@ class PostService(
             )
         )
     }
+
+    suspend fun createNewPost(request: NewPostRequest, userId: String, username: String, profilePictureUrl: String): Boolean{
+        return postRepository.createPost(
+            Post(
+                userId = userId,
+                title = request.title,
+                username = username,
+                description = request.description,
+                postPictureUrl = request.postImageURL,
+                limit = request.limit,
+                available = request.limit,
+                members = mutableListOf(userId),
+                type = request.type,
+                profilePictureUrl = profilePictureUrl,
+                date = request.date,
+                location = request.location
+            )
+        )
+    }
+
 
     suspend fun getPostsByAll(
         page: Int = 0,

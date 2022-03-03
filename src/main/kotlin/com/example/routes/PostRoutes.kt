@@ -2,6 +2,7 @@ package com.example.routes
 
 import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
+import com.example.data.requests.NewPostRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.data.responses.PostDetailResponse
 import com.example.data.util.PostType
@@ -89,6 +90,46 @@ fun Route.createPost(
                         )
                     }
                 } ?: kotlin.run {
+                    call.respond(
+                        HttpStatusCode.BadRequest
+                    )
+                    return@post
+                }
+            }
+        }
+    }
+}
+
+fun Route.createNewPost(
+    postService: PostService,
+    userService: UserService,
+) {
+    authenticate {
+        route("/api/post/new"){
+            post {
+                val request = call.receiveOrNull<NewPostRequest>() ?: kotlin.run {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@post
+                }
+
+                val username = userService.getUsernameById(call.userId)
+                val profilePictureUrl = userService.getUserProfileUrl(call.userId)
+
+                val newPost = postService.createNewPost(
+                    request = request,
+                    userId = call.userId,
+                    username = username ?: "",
+                    profilePictureUrl = profilePictureUrl ?: ""
+                )
+
+                if(newPost){
+                    call.respond(
+                        HttpStatusCode.OK,
+                        BasicApiResponse<Unit>(
+                            successful = true
+                        )
+                    )
+                } else {
                     call.respond(
                         HttpStatusCode.BadRequest
                     )

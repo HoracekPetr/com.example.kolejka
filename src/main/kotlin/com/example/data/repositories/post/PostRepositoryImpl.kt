@@ -16,7 +16,6 @@ class PostRepositoryImpl(
         return posts.insertOne(post).wasAcknowledged()
     }
 
-
     override suspend fun getPostById(postId: String): Post? {
         return posts.findOneById(postId)
     }
