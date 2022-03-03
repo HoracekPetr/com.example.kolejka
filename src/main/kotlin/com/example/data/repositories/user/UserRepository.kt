@@ -2,6 +2,7 @@ package com.example.data.repositories.user
 
 import com.example.data.models.User
 import com.example.data.requests.UpdateProfileRequest
+import com.example.data.requests.UpdateUserRequest
 
 interface UserRepository {
 
@@ -16,6 +17,8 @@ interface UserRepository {
     suspend fun getUserProfileUrl(userId: String): String?
 
     suspend fun updateUser(userId: String, profilePictureUrl: String?, updateProfileRequest: UpdateProfileRequest): Boolean
+
+    suspend fun updateUserInfo(userId: String, updateProfileRequest: UpdateUserRequest): Boolean
 
     suspend fun doesPasswordForUserMatch(email: String, password: String): Boolean
 

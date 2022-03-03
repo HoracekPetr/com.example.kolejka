@@ -28,7 +28,7 @@ class PostService(
         )
     }
 
-    suspend fun createNewPost(request: NewPostRequest, userId: String, username: String, profilePictureUrl: String): Boolean{
+    suspend fun  createNewPost(request: NewPostRequest, userId: String, username: String, profilePictureUrl: String): Boolean{
         return postRepository.createPost(
             Post(
                 userId = userId,

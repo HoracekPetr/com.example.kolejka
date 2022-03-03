@@ -131,7 +131,10 @@ fun Route.createNewPost(
                     )
                 } else {
                     call.respond(
-                        HttpStatusCode.BadRequest
+                        HttpStatusCode.BadRequest,
+                        BasicApiResponse<Unit>(
+                            successful = false
+                        )
                     )
                     return@post
                 }

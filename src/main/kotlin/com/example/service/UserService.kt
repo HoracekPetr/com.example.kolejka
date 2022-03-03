@@ -5,6 +5,7 @@ import com.example.data.repositories.user.UserRepository
 import com.example.data.requests.RegisterAccountRequest
 import com.example.data.requests.LoginAccountRequest
 import com.example.data.requests.UpdateProfileRequest
+import com.example.data.requests.UpdateUserRequest
 import com.example.data.responses.ProfileResponse
 import com.example.util.Constants.DEFAULT_AVATAR_URL
 import com.example.util.validation.ValidationEvent
@@ -71,6 +72,11 @@ class UserService(
         profilePictureUrl: String?,
         updateProfileRequest: UpdateProfileRequest
     ): Boolean = userRepository.updateUser(userId, profilePictureUrl , updateProfileRequest)
+
+    suspend fun updateUserInfo(
+        userId: String,
+        updateUserRequest: UpdateUserRequest
+    ): Boolean = userRepository.updateUserInfo(userId, updateUserRequest)
 
     fun validateCreateAccountRequest(request: RegisterAccountRequest): ValidationEvent {
         return if (request.email.isBlank() || request.password.isBlank() || request.username.isBlank()) {
