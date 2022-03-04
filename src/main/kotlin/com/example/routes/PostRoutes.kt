@@ -16,6 +16,7 @@ import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.QueryParameters
 import com.example.util.QueryParameters.POST_ID
+import com.example.util.QueryParameters.USER_ID
 import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -185,6 +186,36 @@ fun Route.getPostsByCreator(
         }
     }
 }
+
+fun Route.getPostsByOtherCreator(
+    postService: PostService
+) {
+    authenticate {
+        route("/api/post/getPostsByOtherCreator") {
+            get {
+                val userId = call.parameters[USER_ID] ?: kotlin.run {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@get
+                }
+                val page = call.parameters[QueryParameters.PARAM_PAGE]?.toIntOrNull() ?: 0
+                val pageSize =
+                    call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
+
+                val postsByCreator = postService.getPostsByCreator(
+                    userId = userId,
+                    page = page,
+                    pageSize = pageSize
+                )
+
+                call.respond(
+                    HttpStatusCode.OK, postsByCreator
+                )
+            }
+        }
+    }
+}
+
+
 
 fun Route.getPostsWhereUserIsMember(
     postService: PostService
