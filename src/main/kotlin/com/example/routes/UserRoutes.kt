@@ -68,6 +68,39 @@ fun Route.getUserProfile(
     }
 }
 
+fun Route.getOtherUserProfile(
+    userService: UserService
+) {
+    authenticate {
+        route("/api/user/other") {
+            get {
+                val userId = call.parameters[QueryParameters.USER_ID] ?: kotlin.run {
+                    call.respond(BadRequest)
+                    return@get
+                }
+
+                val userProfile = userService.getUserProfile(userId)
+                if (userProfile == null) {
+                    OK
+                    BasicApiResponse<Unit>(
+                        message = ApiResponseMessages.USER_NOT_FOUND,
+                        successful = false
+                    )
+                    return@get
+                }
+
+                call.respond(
+                    OK,
+                    BasicApiResponse(
+                        successful = true,
+                        data = userProfile
+                    )
+                )
+            }
+        }
+    }
+}
+
 fun Route.updateUserInfo(
     userService: UserService,
     postService: PostService
