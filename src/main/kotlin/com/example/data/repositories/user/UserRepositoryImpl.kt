@@ -3,6 +3,7 @@ package com.example.data.repositories.user
 import com.example.data.models.User
 import com.example.data.requests.UpdateProfileRequest
 import com.example.data.requests.UpdateUserRequest
+import com.example.security.checkHashForPassword
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
 
@@ -50,8 +51,9 @@ class UserRepositoryImpl(
     }
 
     override suspend fun doesPasswordForUserMatch(email: String, password: String): Boolean {
-        val user = getUserByEmail(email)
-        return user?.password == password
+        val user = getUserByEmail(email) ?: return false
+        //return user?.password == password
+        return checkHashForPassword(password, user.password)
     }
 
     override suspend fun doesEmailBelongToUserId(email: String, userId: String): Boolean {
