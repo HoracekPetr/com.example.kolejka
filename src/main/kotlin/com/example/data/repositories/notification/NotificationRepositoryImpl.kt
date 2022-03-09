@@ -1,5 +1,6 @@
 package com.example.data.repositories.notification
 
+import com.example.data.models.Comment
 import com.example.data.models.Notification
 import com.example.data.models.NotificationCount
 import com.example.data.models.User
@@ -44,6 +45,10 @@ class NotificationRepositoryImpl(
 
     override suspend fun deleteNotification(notificationId: String): Boolean {
         return notifications.deleteOneById(notificationId).wasAcknowledged()
+    }
+
+    override suspend fun deleteNotificationsForPost(postId: String): Boolean {
+        return notifications.deleteMany(Notification::parentID eq postId).wasAcknowledged()
     }
 
     override suspend fun getNotificationCount(userId: String): Int {

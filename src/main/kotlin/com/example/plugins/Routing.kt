@@ -48,7 +48,7 @@ fun Application.configureRouting() {
         getPostsByAll(postService)
         getPostsByCreator(postService)
         getPostsWhereUserIsMember(postService)
-        deletePost(postService, commentService)
+        deletePost(postService, commentService, notificationService)
         addPostMember(postService, notificationService, commentService)
 
         //Comment Routes

@@ -123,7 +123,8 @@ fun Route.getPostById(
 
 fun Route.deletePost(
     postService: PostService,
-    commentService: CommentService
+    commentService: CommentService,
+    notificationService: NotificationService
 ) {
     authenticate {
         route("/api/post/delete") {
@@ -144,6 +145,7 @@ fun Route.deletePost(
 
                     postService.deletePost(postId)
                     commentService.deleteCommentsForPost(postId)
+                    notificationService.deleteNotificationsForPost(postId)
 
                     call.respond(
                         HttpStatusCode.OK,
