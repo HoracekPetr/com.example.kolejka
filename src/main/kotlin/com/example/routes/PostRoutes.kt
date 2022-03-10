@@ -268,7 +268,16 @@ fun Route.addPostMember(
                                 successful = false
                             )
                         )
-                    } else {
+                    } else if(post.available == 0){
+                        call.respond(
+                            HttpStatusCode.Forbidden,
+                            BasicApiResponse<Unit>(
+                                message = "Post has reached its limit!",
+                                successful = false
+                            )
+                        )
+                    }
+                    else {
 
                         postService.removePostMember(request.postId ?: "", call.userId)
                         commentService.deleteCommentsFromUser(postId = post.id, userId = call.userId)
