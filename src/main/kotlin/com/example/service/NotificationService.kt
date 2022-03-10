@@ -89,4 +89,6 @@ class NotificationService(
         val toUserId = postRepository.getPostById(postId)?.userId ?: return false
         return notificationRepository.updateNotificationCount(toUserId, NotificationCount(userId = toUserId, count = 0))
     }
+
+    suspend fun updateNotificationInfo(userId: String): Boolean = notificationRepository.updateNotificationInfo(userId)
 }

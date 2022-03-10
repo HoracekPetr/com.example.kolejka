@@ -20,4 +20,6 @@ interface NotificationRepository {
     suspend fun updateNotificationCount(userId: String, notificationCount: NotificationCount): Boolean
 
     suspend fun getNotificationCount(userId: String): Int
+
+    suspend fun updateNotificationInfo(userId: String): Boolean
 }

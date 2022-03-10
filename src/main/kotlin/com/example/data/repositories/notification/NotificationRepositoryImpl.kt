@@ -1,16 +1,10 @@
 package com.example.data.repositories.notification
 
-import com.example.data.models.Comment
-import com.example.data.models.Notification
-import com.example.data.models.NotificationCount
-import com.example.data.models.User
+import com.example.data.models.*
 import com.example.data.responses.NotificationResponse
-import org.litote.kmongo.MongoOperator
-import org.litote.kmongo.`in`
+import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.insertOne
-import org.litote.kmongo.eq
-import org.litote.kmongo.inc
 
 class NotificationRepositoryImpl(
     db: CoroutineDatabase
@@ -18,6 +12,7 @@ class NotificationRepositoryImpl(
 
     private val notifications = db.getCollection<Notification>()
     private val notificationsCount = db.getCollection<NotificationCount>()
+    private val users = db.getCollection<User>()
 
     override suspend fun getNotificationsForUser(userId: String, page: Int, pageSize: Int): List<NotificationResponse> {
         val notifications = notifications.find(Notification::toUserID eq userId)
@@ -70,5 +65,12 @@ class NotificationRepositoryImpl(
             println("PŘIDÁVÁM!!!!!!!!!!!!!!!!!!!!!")
             notificationsCount.insertOne(notificationCount).wasAcknowledged()
         }
+    }
+
+    override suspend fun updateNotificationInfo(userId: String): Boolean {
+        return notifications.updateMany(filter = Post::userId eq userId,
+            updates = arrayOf(
+                SetTo(Notification::username, users.findOneById(userId)?.username)
+            )).wasAcknowledged()
     }
 }

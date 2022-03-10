@@ -9,6 +9,7 @@ import com.example.data.requests.UpdateUserRequest
 import com.example.data.responses.AuthResponse
 import com.example.data.responses.BasicApiResponse
 import com.example.service.CommentService
+import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
@@ -105,7 +106,8 @@ fun Route.getOtherUserProfile(
 fun Route.updateUserInfo(
     userService: UserService,
     postService: PostService,
-    commentService: CommentService
+    commentService: CommentService,
+    notificationService: NotificationService
 ) {
     authenticate {
         route("/api/user/update2") {
@@ -125,6 +127,7 @@ fun Route.updateUserInfo(
                 if(updateProfile){
                     postService.updatePostsProfilePic(call.userId)
                     commentService.updateCommentInfo(call.userId)
+                    notificationService.updateNotificationInfo(call.userId)
                     call.respond(
                         OK,
                         BasicApiResponse<Unit>(
