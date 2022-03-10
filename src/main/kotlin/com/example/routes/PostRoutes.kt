@@ -230,6 +230,16 @@ fun Route.addPostMember(
 
                 if (post != null) {
                     if (!postService.isPostMember(request.postId ?: "", call.userId)) {
+                        if(post.available == 0){
+                            call.respond(
+                                HttpStatusCode.Forbidden,
+                                BasicApiResponse<Unit>(
+                                    message = "Post has reached its limit!",
+                                    successful = false
+                                )
+                            )
+                            return@post
+                        }
                         if (postService.addPostMember(request.postId ?: "", call.userId)) {
 
                             notificationService.addPostNotification(
@@ -265,14 +275,6 @@ fun Route.addPostMember(
                             HttpStatusCode.Conflict,
                             BasicApiResponse<Unit>(
                                 message = "You're an owner of this post!",
-                                successful = false
-                            )
-                        )
-                    } else if(post.available == 0){
-                        call.respond(
-                            HttpStatusCode.Forbidden,
-                            BasicApiResponse<Unit>(
-                                message = "Post has reached its limit!",
                                 successful = false
                             )
                         )
