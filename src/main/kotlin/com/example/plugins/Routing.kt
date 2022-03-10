@@ -48,6 +48,7 @@ fun Application.configureRouting() {
         getPostsByAll(postService)
         getPostsByCreator(postService)
         getPostsWhereUserIsMember(postService)
+        getPostsByOtherCreator(postService)
         deletePost(postService, commentService, notificationService)
         addPostMember(postService, notificationService, commentService)
 

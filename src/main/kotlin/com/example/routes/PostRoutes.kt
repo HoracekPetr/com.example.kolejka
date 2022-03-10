@@ -188,6 +188,31 @@ fun Route.getPostsByCreator(
     }
 }
 
+fun Route.getPostsByOtherCreator(
+    postService: PostService
+) {
+    authenticate {
+        route("/api/post/getPostsByOtherCreator") {
+            get {
+                val userId = call.parameters[QueryParameters.USER_ID] ?: ""
+                val page = call.parameters[QueryParameters.PARAM_PAGE]?.toIntOrNull() ?: 0
+                val pageSize =
+                    call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
+
+                val postsByCreator = postService.getPostsByCreator(
+                    userId = userId,
+                    page = page,
+                    pageSize = pageSize
+                )
+
+                call.respond(
+                    HttpStatusCode.OK, postsByCreator
+                )
+            }
+        }
+    }
+}
+
 fun Route.getPostsWhereUserIsMember(
     postService: PostService
 ) {
