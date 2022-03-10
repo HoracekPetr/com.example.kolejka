@@ -15,4 +15,6 @@ interface CommentRepository {
     suspend fun getCommentsForPost(postId: String): List<Comment>
 
     suspend fun getComment(commentId: String): Comment?
+
+    suspend fun updateCommentInfo(userId: String): Boolean
 }

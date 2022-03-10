@@ -39,7 +39,7 @@ fun Application.configureRouting() {
         //User Routes
         getUserProfile(userService)
         getOtherUserProfile(userService)
-        updateUserInfo(userService, postService)
+        updateUserInfo(userService, postService, commentService)
 
         //Post Routes
         createNewPost(postService, userService)
