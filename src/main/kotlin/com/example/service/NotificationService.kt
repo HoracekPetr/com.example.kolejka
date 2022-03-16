@@ -90,5 +90,9 @@ class NotificationService(
         return notificationRepository.updateNotificationCount(toUserId, NotificationCount(userId = toUserId, count = 0))
     }
 
+    suspend fun setNotificationsToZero(userId: String): Boolean {
+        return notificationRepository.setNotificationsToZero(userId)
+    }
+
     suspend fun updateNotificationInfo(userId: String): Boolean = notificationRepository.updateNotificationInfo(userId)
 }

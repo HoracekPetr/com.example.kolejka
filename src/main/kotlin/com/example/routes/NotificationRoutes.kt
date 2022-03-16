@@ -50,3 +50,26 @@ fun Route.getNotificationCount(
         }
     }
 }
+
+fun Route.setNotificationsToZero(
+    notificationService: NotificationService
+){
+    authenticate{
+        route("/api/notifications/zero"){
+            post{
+                val userId = call.userId
+
+                if(notificationService.setNotificationsToZero(userId)){
+                    call.respond(
+                        HttpStatusCode.OK
+                    )
+                }
+                else{
+                    call.respond(
+                        HttpStatusCode.BadRequest
+                    )
+                }
+            }
+        }
+    }
+}

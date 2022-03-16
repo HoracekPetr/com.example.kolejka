@@ -47,11 +47,11 @@ class NotificationRepositoryImpl(
     }
 
     override suspend fun getNotificationCount(userId: String): Int {
-        val count =  notificationsCount.findOne(NotificationCount::userId eq userId)
+        val count = notificationsCount.findOne(NotificationCount::userId eq userId)
         println("USERID: $userId")
         println("Notification count: ${NotificationCount::userId}")
         println("COUNT: $count")
-        return count?.count ?: 10
+        return count?.count ?: 0
     }
 
     override suspend fun updateNotificationCount(userId: String, notificationCount: NotificationCount): Boolean {
@@ -67,10 +67,23 @@ class NotificationRepositoryImpl(
         }
     }
 
+    override suspend fun setNotificationsToZero(userId: String): Boolean {
+        val count = notificationsCount.findOne(NotificationCount::userId eq userId)
+
+        if (count != null) {
+            val countValue = count.count
+            return notificationsCount.updateOneById(count.id, inc(count::count, -countValue)).wasAcknowledged()
+        }
+
+        return false
+    }
+
     override suspend fun updateNotificationInfo(userId: String): Boolean {
-        return notifications.updateMany(filter = Post::userId eq userId,
+        return notifications.updateMany(
+            filter = Post::userId eq userId,
             updates = arrayOf(
                 SetTo(Notification::username, users.findOneById(userId)?.username)
-            )).wasAcknowledged()
+            )
+        ).wasAcknowledged()
     }
 }
