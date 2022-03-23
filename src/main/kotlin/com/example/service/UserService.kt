@@ -2,10 +2,7 @@ package com.example.service
 
 import com.example.data.models.User
 import com.example.data.repositories.user.UserRepository
-import com.example.data.requests.RegisterAccountRequest
-import com.example.data.requests.LoginAccountRequest
-import com.example.data.requests.UpdateProfileRequest
-import com.example.data.requests.UpdateUserRequest
+import com.example.data.requests.*
 import com.example.data.responses.ProfileResponse
 import com.example.security.getHashWithSalt
 import com.example.util.Constants.DEFAULT_AVATAR_URL
@@ -73,6 +70,9 @@ class UserService(
         updateUserRequest: UpdateUserRequest
     ): Boolean = userRepository.updateUserInfo(userId, updateUserRequest)
 
+    suspend fun changeUserPassword(changePasswordRequest: ChangePasswordRequest) =
+        userRepository.changeUserPassword(changePasswordRequest.userId, changePasswordRequest.newPassword)
+
     fun validateCreateAccountRequest(request: RegisterAccountRequest): ValidationEvent {
         return if (request.email.isBlank() || request.password.isBlank() || request.username.isBlank()) {
             ValidationEvent.EmptyFieldError
@@ -84,4 +84,6 @@ class UserService(
             ValidationEvent.EmptyFieldError
         } else ValidationEvent.Success
     }
+
+
 }
