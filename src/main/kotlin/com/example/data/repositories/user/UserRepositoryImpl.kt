@@ -63,7 +63,7 @@ class UserRepositoryImpl(
         return users.findOneById(userId)?.email == email
     }
 
-    override suspend fun changeUserPassword(userId: String, newPassword: String): Boolean {
+    override suspend fun changeUserPassword(userId: String?, newPassword: String): Boolean {
         return users.updateOne(
             filter = User::id eq userId,
             update = setValue(User::password, getHashWithSalt(newPassword))

@@ -19,7 +19,7 @@ interface UserRepository {
 
     suspend fun updateUserInfo(userId: String, updateProfileRequest: UpdateUserRequest): Boolean
 
-    suspend fun changeUserPassword(userId: String, newPassword: String): Boolean
+    suspend fun changeUserPassword(userId: String?, newPassword: String): Boolean
 
     suspend fun doesPasswordForUserMatch(email: String, password: String): Boolean
 
