@@ -27,7 +27,7 @@ fun Route.registerUser(
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
-
+            
             if (userService.doesUserWithEmailExist(request.email)) {
                 call.respond(
                     BasicApiResponse<Unit>(ApiResponseMessages.USER_ALREADY_EXISTS, false)
@@ -90,7 +90,7 @@ fun Route.loginUser(
 
                     if (userService.isPasswordCorrect(user.email, request.password)) {
 
-                        val expiresIn = 1000L * 60L * 60L * 24L * 365L //token expiruje za rok
+                        val expiresIn = 1000L * 60L * 60L * 24L * 30L //token expiruje za 30 dní
 
                         val token = JWT.create()
                             .withClaim("userId", user.id)
@@ -127,3 +127,6 @@ fun Route.authenticate(){
         }
     }
 }
+
+
+
