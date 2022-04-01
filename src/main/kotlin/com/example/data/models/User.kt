@@ -11,7 +11,7 @@ data class  User(
     val email: String,
     val username: String,
     val password: String,
-    val profilePictureURL: String,
+    val profilePictureURL: String = Constants.DEFAULT_AVATAR_URL,
     val bannerR: Float = 255f,
     val bannerG: Float = 255f,
     val bannerB: Float = 255f

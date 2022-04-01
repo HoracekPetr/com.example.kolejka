@@ -60,7 +60,7 @@ class UserService(
                 email = request.email,
                 username = request.username,
                 password = getHashWithSalt(request.password),
-                profilePictureURL = DEFAULT_AVATAR_URL
+                //profilePictureURL = DEFAULT_AVATAR_URL
             )
         )
     }
