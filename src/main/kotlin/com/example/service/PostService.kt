@@ -50,4 +50,3 @@ class PostService(
 
     suspend fun updatePostsProfilePic(userId: String): Boolean = postRepository.updatePostsInfo(userId)
 }
-

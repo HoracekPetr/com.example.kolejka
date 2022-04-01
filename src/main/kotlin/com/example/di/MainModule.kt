@@ -25,7 +25,6 @@ val mainModule = module {
         client.getDatabase(DATABASE_NAME)
     }
 
-
     single<UserRepository> {
         UserRepositoryImpl(get())
     }

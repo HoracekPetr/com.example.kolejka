@@ -68,5 +68,6 @@ fun Application.configureRouting() {
         static {
             resources("static")
         }
+
     }
 }

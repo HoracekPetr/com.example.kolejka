@@ -69,4 +69,3 @@ class PostRepositoryImpl(
         return userId in post.members
     }
 }
-

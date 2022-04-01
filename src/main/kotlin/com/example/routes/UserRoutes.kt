@@ -211,7 +211,3 @@ fun Route.getUserId(
         }
     }
 }
-
-
-
-

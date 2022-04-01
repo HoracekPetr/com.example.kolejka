@@ -33,28 +33,21 @@ fun Route.createNewPost(
     userService: UserService,
 ) {
     authenticate {
-        route("/api/post/new") {
+        route("/api/post/new"){
             post {
                 val request = call.receiveOrNull<NewPostRequest>() ?: kotlin.run {
                     call.respond(HttpStatusCode.BadRequest)
                     return@post
                 }
 
-                val username = userService.getUsernameById(call.userId) ?: kotlin.run {
-                    call.respond(HttpStatusCode.NotFound)
-                    return@post
-                }
-
-                val profilePictureUrl = userService.getUserProfileUrl(call.userId) ?: kotlin.run {
-                    call.respond(HttpStatusCode.NotFound)
-                    return@post
-                }
+                val username = userService.getUsernameById(call.userId)
+                val profilePictureUrl = userService.getUserProfileUrl(call.userId)
 
                 val newPost = postService.createNewPost(
                     request = request,
                     userId = call.userId,
-                    username = username,
-                    profilePictureUrl = profilePictureUrl
+                    username = username ?: "",
+                    profilePictureUrl = profilePictureUrl ?: ""
                 )
 
                 if(newPost){
@@ -89,12 +82,9 @@ fun Route.getPostsByAll(
                     call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
 
                 val allPosts = postService.getPostsByAll(page, pageSize)
-
-                if(allPosts.isNotEmpty()){
-                    call.respond(
-                        HttpStatusCode.OK, allPosts
-                    )
-                }
+                call.respond(
+                    HttpStatusCode.OK, allPosts
+                )
             }
         }
     }
@@ -336,7 +326,5 @@ fun Route.addPostMember(
         }
     }
 }
-
-
 
 
