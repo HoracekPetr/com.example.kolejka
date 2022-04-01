@@ -47,4 +47,6 @@ class CommentService(
 
     suspend fun getComment(commentId: String): Comment? = commentRepository.getComment(commentId)
 
+    suspend fun updateCommentInfo(userId: String): Boolean = commentRepository.updateCommentInfo(userId)
+
 }

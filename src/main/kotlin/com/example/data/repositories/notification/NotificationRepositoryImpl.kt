@@ -1,15 +1,10 @@
 package com.example.data.repositories.notification
 
-import com.example.data.models.Notification
-import com.example.data.models.NotificationCount
-import com.example.data.models.User
+import com.example.data.models.*
 import com.example.data.responses.NotificationResponse
-import org.litote.kmongo.MongoOperator
-import org.litote.kmongo.`in`
+import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.insertOne
-import org.litote.kmongo.eq
-import org.litote.kmongo.inc
 
 class NotificationRepositoryImpl(
     db: CoroutineDatabase
@@ -17,6 +12,7 @@ class NotificationRepositoryImpl(
 
     private val notifications = db.getCollection<Notification>()
     private val notificationsCount = db.getCollection<NotificationCount>()
+    private val users = db.getCollection<User>()
 
     override suspend fun getNotificationsForUser(userId: String, page: Int, pageSize: Int): List<NotificationResponse> {
         val notifications = notifications.find(Notification::toUserID eq userId)
@@ -46,12 +42,16 @@ class NotificationRepositoryImpl(
         return notifications.deleteOneById(notificationId).wasAcknowledged()
     }
 
+    override suspend fun deleteNotificationsForPost(postId: String): Boolean {
+        return notifications.deleteMany(Notification::parentID eq postId).wasAcknowledged()
+    }
+
     override suspend fun getNotificationCount(userId: String): Int {
-        val count =  notificationsCount.findOne(NotificationCount::userId eq userId)
+        val count = notificationsCount.findOne(NotificationCount::userId eq userId)
         println("USERID: $userId")
         println("Notification count: ${NotificationCount::userId}")
         println("COUNT: $count")
-        return count?.count ?: 10
+        return count?.count ?: 0
     }
 
     override suspend fun updateNotificationCount(userId: String, notificationCount: NotificationCount): Boolean {
@@ -65,5 +65,25 @@ class NotificationRepositoryImpl(
             println("PŘIDÁVÁM!!!!!!!!!!!!!!!!!!!!!")
             notificationsCount.insertOne(notificationCount).wasAcknowledged()
         }
+    }
+
+    override suspend fun setNotificationsToZero(userId: String): Boolean {
+        val count = notificationsCount.findOne(NotificationCount::userId eq userId)
+
+        if (count != null) {
+            val countValue = count.count
+            return notificationsCount.updateOneById(count.id, inc(count::count, -countValue)).wasAcknowledged()
+        }
+
+        return false
+    }
+
+    override suspend fun updateNotificationInfo(userId: String): Boolean {
+        return notifications.updateMany(
+            filter = Post::userId eq userId,
+            updates = arrayOf(
+                SetTo(Notification::username, users.findOneById(userId)?.username)
+            )
+        ).wasAcknowledged()
     }
 }

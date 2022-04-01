@@ -26,6 +26,7 @@ interface PostRepository {
         pageSize: Int = POSTS_PAGE_SIZE
     ): List<Post>
 
+
     suspend fun deletePost(postId: String): Boolean
 
     suspend fun addPostMember(postId: String, userId: String): Boolean

@@ -24,6 +24,8 @@ class NotificationService(
     suspend fun deleteNotification(notificationId: String): Boolean =
         notificationRepository.deleteNotification(notificationId)
 
+    suspend fun deleteNotificationsForPost(postId: String): Boolean = notificationRepository.deleteNotificationsForPost(postId)
+
     suspend fun addPostNotification(
         byUserId: String,
         postId: String,
@@ -87,4 +89,10 @@ class NotificationService(
         val toUserId = postRepository.getPostById(postId)?.userId ?: return false
         return notificationRepository.updateNotificationCount(toUserId, NotificationCount(userId = toUserId, count = 0))
     }
+
+    suspend fun setNotificationsToZero(userId: String): Boolean {
+        return notificationRepository.setNotificationsToZero(userId)
+    }
+
+    suspend fun updateNotificationInfo(userId: String): Boolean = notificationRepository.updateNotificationInfo(userId)
 }

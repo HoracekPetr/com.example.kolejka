@@ -39,7 +39,9 @@ fun Application.configureRouting() {
         //User Routes
         getUserProfile(userService)
         getOtherUserProfile(userService)
-        updateUserInfo(userService, postService)
+        updateUserInfo(userService, postService, commentService, notificationService)
+        changeUserPassword(userService)
+        getUserId(userService)
 
         //Post Routes
         createNewPost(postService, userService)
@@ -49,8 +51,7 @@ fun Application.configureRouting() {
         getPostsByCreator(postService)
         getPostsWhereUserIsMember(postService)
         getPostsByOtherCreator(postService)
-
-        deletePost(postService, commentService)
+        deletePost(postService, commentService, notificationService)
         addPostMember(postService, notificationService, commentService)
 
         //Comment Routes
@@ -61,6 +62,7 @@ fun Application.configureRouting() {
         //Notification Routes
         getNotificationsForUser(notificationService)
         getNotificationCount(notificationService)
+        setNotificationsToZero(notificationService)
 
         //Static Routes
         static {

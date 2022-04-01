@@ -2,12 +2,11 @@ package com.example.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.data.requests.RegisterAccountRequest
-import com.example.data.requests.LoginAccountRequest
-import com.example.data.requests.UpdateProfileRequest
-import com.example.data.requests.UpdateUserRequest
+import com.example.data.requests.*
 import com.example.data.responses.AuthResponse
 import com.example.data.responses.BasicApiResponse
+import com.example.service.CommentService
+import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
@@ -27,6 +26,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
+import io.ktor.http.HttpStatusCode.Companion.NotFound
 import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.http.content.*
 import org.koin.ktor.ext.inject
@@ -103,7 +103,9 @@ fun Route.getOtherUserProfile(
 
 fun Route.updateUserInfo(
     userService: UserService,
-    postService: PostService
+    postService: PostService,
+    commentService: CommentService,
+    notificationService: NotificationService
 ) {
     authenticate {
         route("/api/user/update2") {
@@ -122,6 +124,8 @@ fun Route.updateUserInfo(
 
                 if(updateProfile){
                     postService.updatePostsProfilePic(call.userId)
+                    commentService.updateCommentInfo(call.userId)
+                    notificationService.updateNotificationInfo(call.userId)
                     call.respond(
                         OK,
                         BasicApiResponse<Unit>(
@@ -138,6 +142,72 @@ fun Route.updateUserInfo(
                     return@put
                 }
             }
+        }
+    }
+}
+
+fun Route.changeUserPassword(
+    userService: UserService
+){
+    route("/api/user/change"){
+        put{
+            val request = call.receiveOrNull<ChangePasswordRequest>() ?: kotlin.run {
+                BadRequest
+                return@put
+            }
+
+            when(userService.changeUserPassword(request)){
+                true -> {
+                    call.respond(
+                        OK,
+                        BasicApiResponse<Unit>(
+                            successful = true
+                        )
+                    )
+                }
+                false -> {
+                    call.respond(
+                        BadRequest,
+                        BasicApiResponse<Unit>(
+                            successful = false
+                        )
+                    )
+                }
+            }
+
+        }
+    }
+}
+
+fun Route.getUserId(
+    userService: UserService
+){
+    route("/api/user/id"){
+        get {
+            val userEmail = call.parameters[QueryParameters.EMAIL] ?: kotlin.run {
+                BadRequest
+                return@get
+            }
+
+            val userId = userService.getUserByEmail(userEmail)?.id
+
+            if(userId == null){
+                call.respond(
+                    NotFound,
+                    BasicApiResponse<Unit>(
+                        successful = false
+                    )
+                )
+                return@get
+            }
+
+            call.respond(
+                OK,
+                BasicApiResponse(
+                    successful = true,
+                    data = userId
+                )
+            )
         }
     }
 }

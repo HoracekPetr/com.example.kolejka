@@ -16,7 +16,6 @@ import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.QueryParameters
 import com.example.util.QueryParameters.POST_ID
-import com.example.util.QueryParameters.USER_ID
 import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -124,7 +123,8 @@ fun Route.getPostById(
 
 fun Route.deletePost(
     postService: PostService,
-    commentService: CommentService
+    commentService: CommentService,
+    notificationService: NotificationService
 ) {
     authenticate {
         route("/api/post/delete") {
@@ -145,6 +145,7 @@ fun Route.deletePost(
 
                     postService.deletePost(postId)
                     commentService.deleteCommentsForPost(postId)
+                    notificationService.deleteNotificationsForPost(postId)
 
                     call.respond(
                         HttpStatusCode.OK,
@@ -193,10 +194,7 @@ fun Route.getPostsByOtherCreator(
     authenticate {
         route("/api/post/getPostsByOtherCreator") {
             get {
-                val userId = call.parameters[USER_ID] ?: kotlin.run {
-                    call.respond(HttpStatusCode.BadRequest)
-                    return@get
-                }
+                val userId = call.parameters[QueryParameters.USER_ID] ?: ""
                 val page = call.parameters[QueryParameters.PARAM_PAGE]?.toIntOrNull() ?: 0
                 val pageSize =
                     call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
@@ -214,8 +212,6 @@ fun Route.getPostsByOtherCreator(
         }
     }
 }
-
-
 
 fun Route.getPostsWhereUserIsMember(
     postService: PostService
@@ -259,6 +255,16 @@ fun Route.addPostMember(
 
                 if (post != null) {
                     if (!postService.isPostMember(request.postId ?: "", call.userId)) {
+                        if(post.available == 0){
+                            call.respond(
+                                HttpStatusCode.Forbidden,
+                                BasicApiResponse<Unit>(
+                                    message = "Post has reached its limit!",
+                                    successful = false
+                                )
+                            )
+                            return@post
+                        }
                         if (postService.addPostMember(request.postId ?: "", call.userId)) {
 
                             notificationService.addPostNotification(
@@ -297,7 +303,8 @@ fun Route.addPostMember(
                                 successful = false
                             )
                         )
-                    } else {
+                    }
+                    else {
 
                         postService.removePostMember(request.postId ?: "", call.userId)
                         commentService.deleteCommentsFromUser(postId = post.id, userId = call.userId)
