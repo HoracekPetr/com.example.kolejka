@@ -26,6 +26,8 @@ class NotificationService(
 
     suspend fun deleteNotificationsForPost(postId: String): Boolean = notificationRepository.deleteNotificationsForPost(postId)
 
+    suspend fun deleteAllNotificationsForUser(userId: String): Boolean = notificationRepository.deleteAllNotificationsForUser(userId)
+
     suspend fun addPostNotification(
         byUserId: String,
         postId: String,

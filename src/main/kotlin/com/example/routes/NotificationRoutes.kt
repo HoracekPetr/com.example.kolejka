@@ -73,3 +73,27 @@ fun Route.setNotificationsToZero(
         }
     }
 }
+
+fun Route.deleteNotificationsForUser(
+    notificationService: NotificationService
+){
+    authenticate {
+        route("/api/notifications/delete"){
+            delete {
+                val userId = call.userId
+
+                val deleteNotifications = notificationService.deleteAllNotificationsForUser(userId)
+
+                if(deleteNotifications){
+                    call.respond(
+                        BasicApiResponse<Unit>(successful = true)
+                    )
+                } else {
+                    call.respond(
+                        BasicApiResponse<Unit>(successful = true)
+                    )
+                }
+            }
+        }
+    }
+}
