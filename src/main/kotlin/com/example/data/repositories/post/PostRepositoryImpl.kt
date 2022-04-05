@@ -42,6 +42,7 @@ class PostRepositoryImpl(
         return posts.find(and(Post::members contains userId, Post::userId ne userId))
             .skip(page * pageSize)
             .limit(pageSize)
+            .descendingSort(Post::timestamp)
             .toList()
     }
 
@@ -49,6 +50,7 @@ class PostRepositoryImpl(
         return posts.find(Post::userId eq userId)
             .skip(page * pageSize)
             .limit(pageSize)
+            .descendingSort(Post::timestamp)
             .toList()
     }
 
