@@ -22,7 +22,11 @@ class PostRepositoryImpl(
 
     override suspend fun getPostsByAll(page: Int, pageSize: Int): List<Post> {
 
-        return posts.find(Post::available gt 0).skip(page * pageSize).limit(pageSize).toList()
+        return posts.find(Post::available gt 0)
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .descendingSort(Post::timestamp)
+            .toList()
 
     }
 
