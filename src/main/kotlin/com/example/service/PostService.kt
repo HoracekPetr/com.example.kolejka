@@ -23,7 +23,8 @@ class PostService(
                 type = request.type,
                 profilePictureUrl = profilePictureUrl,
                 date = request.date,
-                location = request.location
+                location = request.location,
+                timestamp = System.currentTimeMillis()
             )
         )
     }
