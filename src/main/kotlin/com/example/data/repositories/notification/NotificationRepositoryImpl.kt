@@ -70,7 +70,9 @@ class NotificationRepositoryImpl(
 
         if (count != null) {
             val countValue = count.count
-            return notificationsCount.updateOneById(count.id, inc(count::count, -countValue)).wasAcknowledged()
+            if(countValue != 0){
+                return notificationsCount.updateOneById(count.id, inc(count::count, -countValue)).wasAcknowledged()
+            }
         }
 
         return false
