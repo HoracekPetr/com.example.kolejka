@@ -35,3 +35,4 @@ interface PostRepository {
 
     suspend fun isPostMember(postId: String, userId: String): Boolean
 }
+
