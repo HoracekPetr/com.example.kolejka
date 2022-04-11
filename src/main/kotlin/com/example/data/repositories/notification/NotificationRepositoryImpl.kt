@@ -73,7 +73,10 @@ class NotificationRepositoryImpl(
             if(countValue != 0){
                 return notificationsCount.updateOneById(count.id, inc(count::count, -countValue)).wasAcknowledged()
             }
+
+            return true
         }
+
 
         return false
     }
