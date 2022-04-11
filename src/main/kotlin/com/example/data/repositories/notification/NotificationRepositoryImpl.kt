@@ -46,23 +46,21 @@ class NotificationRepositoryImpl(
         return notifications.deleteMany(Notification::parentID eq postId).wasAcknowledged()
     }
 
+    override suspend fun deleteAllNotificationsForUser(userId: String): Boolean {
+        return notifications.deleteMany(Notification::toUserID eq userId).wasAcknowledged()
+    }
+
     override suspend fun getNotificationCount(userId: String): Int {
         val count = notificationsCount.findOne(NotificationCount::userId eq userId)
-        println("USERID: $userId")
-        println("Notification count: ${NotificationCount::userId}")
-        println("COUNT: $count")
         return count?.count ?: 0
     }
 
     override suspend fun updateNotificationCount(userId: String, notificationCount: NotificationCount): Boolean {
 
         val count = notificationsCount.findOne(NotificationCount::userId eq userId)
-        println("COUNT: $count")
         return if (count != null) {
-            println("UPDATUJU!!!!!!!!!!!!!!!!!!!!!")
             notificationsCount.updateOneById(count.id, inc(count::count, 1)).wasAcknowledged()
         } else {
-            println("PŘIDÁVÁM!!!!!!!!!!!!!!!!!!!!!")
             notificationsCount.insertOne(notificationCount).wasAcknowledged()
         }
     }

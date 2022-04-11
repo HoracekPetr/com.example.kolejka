@@ -63,6 +63,7 @@ fun Application.configureRouting() {
         getNotificationsForUser(notificationService)
         getNotificationCount(notificationService)
         setNotificationsToZero(notificationService)
+        deleteNotificationsForUser(notificationService)
 
         //Static Routes
         static {
