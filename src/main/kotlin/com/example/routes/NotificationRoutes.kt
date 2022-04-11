@@ -90,7 +90,7 @@ fun Route.deleteNotificationsForUser(
                     )
                 } else {
                     call.respond(
-                        BasicApiResponse<Unit>(successful = true)
+                        BasicApiResponse<Unit>(successful = false)
                     )
                 }
             }
