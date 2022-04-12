@@ -44,7 +44,13 @@ class PostService(
     suspend fun editPostInfo(
         updatePostRequest: UpdatePostRequest
     ): EditPostValidation{
-        if(updatePostRequest.title.isBlank() || updatePostRequest.description.isBlank() || updatePostRequest.limit == null){
+        if(
+            updatePostRequest.title.isBlank() ||
+            updatePostRequest.description.isBlank() ||
+            updatePostRequest.limit == null ||
+            updatePostRequest.date.isBlank() ||
+            updatePostRequest.location.isBlank())
+        {
             return EditPostValidation.EmptyFieldError
         }
 
