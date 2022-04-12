@@ -53,6 +53,7 @@ fun Application.configureRouting() {
         getPostsByOtherCreator(postService)
         deletePost(postService, commentService, notificationService)
         addPostMember(postService, notificationService, commentService)
+        editPostInfo(postService)
 
         //Comment Routes
         createComment(commentService, notificationService, postService)

@@ -1,6 +1,7 @@
 package com.example.data.repositories.post
 
 import com.example.data.models.Post
+import com.example.data.requests.UpdatePostRequest
 import com.example.util.Constants.POSTS_PAGE_SIZE
 
 interface PostRepository {
@@ -26,6 +27,9 @@ interface PostRepository {
         pageSize: Int = POSTS_PAGE_SIZE
     ): List<Post>
 
+    suspend fun editPostInfo(
+        updatePostRequest: UpdatePostRequest
+    ): Boolean
 
     suspend fun deletePost(postId: String): Boolean
 

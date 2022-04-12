@@ -2,6 +2,7 @@ package com.example.data.repositories.post
 
 import com.example.data.models.Post
 import com.example.data.models.User
+import com.example.data.requests.UpdatePostRequest
 import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
 
@@ -28,6 +29,29 @@ class PostRepositoryImpl(
             .descendingSort(Post::timestamp)
             .toList()
 
+    }
+
+    override suspend fun editPostInfo(updatePostRequest: UpdatePostRequest): Boolean {
+        val post = posts.findOneById(id = updatePostRequest.postId) ?: return false
+        return posts.updateOneById(
+            id = post.id,
+            update = Post(
+                id = post.id,
+                username = post.username,
+                members = post.members,
+                title = updatePostRequest.title,
+                description = updatePostRequest.description,
+                limit = updatePostRequest.limit,
+                date = updatePostRequest.date,
+                location = updatePostRequest.location,
+                profilePictureUrl = post.profilePictureUrl,
+                postPictureUrl = updatePostRequest.postPictureUrl ?: post.postPictureUrl,
+                userId = post.userId,
+                available = post.available,
+                type = post.type,
+                timestamp = post.timestamp
+            )
+        ).wasAcknowledged()
     }
 
     override suspend fun updatePostsInfo(userId: String): Boolean {

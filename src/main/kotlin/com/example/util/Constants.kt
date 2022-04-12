@@ -5,6 +5,8 @@ object Constants {
     const val POSTS_PAGE_SIZE = 15
     const val NOTIFICATIONS_PAGE_SIZE = 15
     const val MAX_COMMENT_LENGTH = 500
+    const val DESC_MAX_CHARS = 200
+    const val TITLE_MAX_CHARS = 50
 
     const val BASE_URL = "https://kolejka-app.herokuapp.com"
     const val PROFILE_PIC_PATH = "build/resources/main/static/profile_pictures"

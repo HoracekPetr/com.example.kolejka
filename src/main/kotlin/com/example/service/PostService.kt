@@ -4,6 +4,10 @@ import com.example.data.models.Post
 import com.example.data.repositories.post.PostRepository
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.NewPostRequest
+import com.example.data.requests.UpdatePostRequest
+import com.example.util.Constants.DESC_MAX_CHARS
+import com.example.util.Constants.TITLE_MAX_CHARS
+import com.example.util.validation.EditPostValidation
 
 class PostService(
     private val postRepository: PostRepository
@@ -35,6 +39,24 @@ class PostService(
         pageSize: Int = 15
     ): List<Post>{
         return postRepository.getPostsByAll(page, pageSize)
+    }
+
+    suspend fun editPostInfo(
+        updatePostRequest: UpdatePostRequest
+    ): EditPostValidation{
+        if(updatePostRequest.title.isBlank() || updatePostRequest.description.isBlank() || updatePostRequest.limit == null){
+            return EditPostValidation.EmptyFieldError
+        }
+
+        if(updatePostRequest.description.length > DESC_MAX_CHARS){
+            return EditPostValidation.DescriptionTooLong
+        }
+
+        if(updatePostRequest.title.length > TITLE_MAX_CHARS){
+            return EditPostValidation.TitleTooLong
+        }
+
+        return EditPostValidation.Success(postRepository.editPostInfo(updatePostRequest))
     }
 
     suspend fun getPost(postId: String): Post? = postRepository.getPostById(postId)

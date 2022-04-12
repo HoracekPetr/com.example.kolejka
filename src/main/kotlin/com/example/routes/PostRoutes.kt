@@ -3,6 +3,7 @@ package com.example.routes
 import com.example.data.requests.AddMemberRequest
 import com.example.data.requests.CreatePostRequest
 import com.example.data.requests.NewPostRequest
+import com.example.data.requests.UpdatePostRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.data.responses.PostDetailResponse
 import com.example.data.util.PostType
@@ -10,12 +11,16 @@ import com.example.service.CommentService
 import com.example.service.NotificationService
 import com.example.service.PostService
 import com.example.service.UserService
+import com.example.util.ApiResponseMessages.DESC_TOO_LONG
+import com.example.util.ApiResponseMessages.FIELDS_BLANK
 import com.example.util.ApiResponseMessages.POST_NOT_FOUND
+import com.example.util.ApiResponseMessages.TITLE_TOO_LONG
 import com.example.util.Constants
 import com.example.util.Constants.BASE_URL
 import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.QueryParameters
 import com.example.util.QueryParameters.POST_ID
+import com.example.util.validation.EditPostValidation
 import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -115,6 +120,56 @@ fun Route.getPostById(
                             data = PostDetailResponse(post = post, requesterId = call.userId)
                         )
                     )
+                }
+            }
+        }
+    }
+}
+
+fun Route.editPostInfo(
+    postService: PostService
+) {
+    authenticate{
+        route("/api/post/edit"){
+            put {
+                val request = call.receiveOrNull<UpdatePostRequest>() ?: kotlin.run {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@put
+                }
+
+                if(call.userId != postService.getPostById(request.postId)?.userId){
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        BasicApiResponse<Unit>(successful = false)
+                    )
+                }
+
+                when(postService.editPostInfo(request)){
+                    is EditPostValidation.EmptyFieldError -> {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            BasicApiResponse<Unit>(message = FIELDS_BLANK, successful = false)
+                        )
+                    }
+                    is EditPostValidation.TitleTooLong -> {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            BasicApiResponse<Unit>(message = TITLE_TOO_LONG, successful = false)
+                        )
+                    }
+                    is EditPostValidation.DescriptionTooLong -> {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            BasicApiResponse<Unit>(message = DESC_TOO_LONG, successful = false)
+                        )
+                    }
+
+                    is EditPostValidation.Success -> {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            BasicApiResponse<Unit>(successful = true)
+                        )
+                    }
                 }
             }
         }
