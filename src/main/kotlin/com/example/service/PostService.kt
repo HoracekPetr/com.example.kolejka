@@ -66,7 +66,7 @@ class PostService(
             return EditPostValidation.LimitCantBeLower
         }
 
-        return EditPostValidation.Success(postRepository.editPostInfo(updatePostRequest))
+        return EditPostValidation.Success(request = postRepository.editPostInfo(updatePostRequest))
     }
 
     suspend fun getPost(postId: String): Post? = postRepository.getPostById(postId)
