@@ -62,6 +62,10 @@ class PostService(
             return EditPostValidation.TitleTooLong
         }
 
+        if(updatePostRequest.limit < (postRepository.getPostById(updatePostRequest.postId)?.available ?: 0)){
+            return EditPostValidation.LimitCantBeLower
+        }
+
         return EditPostValidation.Success(postRepository.editPostInfo(updatePostRequest))
     }
 

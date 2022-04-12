@@ -47,7 +47,7 @@ class PostRepositoryImpl(
                 profilePictureUrl = post.profilePictureUrl,
                 postPictureUrl = updatePostRequest.postPictureUrl ?: post.postPictureUrl,
                 userId = post.userId,
-                available = post.available,
+                available = post.available + ((updatePostRequest.limit ?: 0) - post.available),
                 type = post.type,
                 timestamp = post.timestamp
             )

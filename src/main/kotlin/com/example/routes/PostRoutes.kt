@@ -13,6 +13,7 @@ import com.example.service.PostService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages.DESC_TOO_LONG
 import com.example.util.ApiResponseMessages.FIELDS_BLANK
+import com.example.util.ApiResponseMessages.LIMIT_CANT_BE_LOWER
 import com.example.util.ApiResponseMessages.POST_NOT_FOUND
 import com.example.util.ApiResponseMessages.TITLE_TOO_LONG
 import com.example.util.Constants
@@ -161,6 +162,13 @@ fun Route.editPostInfo(
                         call.respond(
                             HttpStatusCode.OK,
                             BasicApiResponse<Unit>(message = DESC_TOO_LONG, successful = false)
+                        )
+                    }
+
+                    is EditPostValidation.LimitCantBeLower -> {
+                        call.respond(
+                            HttpStatusCode.OK,
+                            BasicApiResponse<Unit>(message = LIMIT_CANT_BE_LOWER, successful = false)
                         )
                     }
 
