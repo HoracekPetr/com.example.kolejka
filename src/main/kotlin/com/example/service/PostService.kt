@@ -62,7 +62,7 @@ class PostService(
             return EditPostValidation.TitleTooLong
         }
 
-        if(updatePostRequest.limit < ((postRepository.getPostById(updatePostRequest.postId)?.members?.size ?: 0) + 1)){
+        if(updatePostRequest.limit < ((postRepository.getPostById(updatePostRequest.postId)?.members?.size ?: 0) + 2)){
             return EditPostValidation.LimitCantBeLower
         }
 
