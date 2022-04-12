@@ -38,6 +38,10 @@ class NotificationRepositoryImpl(
         return notifications.insertOne(notification).wasAcknowledged()
     }
 
+    override suspend fun createNotificationCount(notificationCount: NotificationCount): Boolean {
+        return notificationsCount.insertOne(notificationCount).wasAcknowledged()
+    }
+
     override suspend fun deleteNotification(notificationId: String): Boolean {
         return notifications.deleteOneById(notificationId).wasAcknowledged()
     }

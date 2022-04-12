@@ -13,6 +13,8 @@ interface NotificationRepository {
 
     suspend fun createNotification(notification: Notification): Boolean
 
+    suspend fun createNotificationCount(notificationCount: NotificationCount): Boolean
+
     suspend fun deleteNotification(notificationId: String): Boolean
 
     suspend fun deleteNotificationsForPost(postId: String): Boolean

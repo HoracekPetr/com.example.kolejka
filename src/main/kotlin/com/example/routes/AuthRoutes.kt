@@ -6,6 +6,7 @@ import com.example.data.requests.LoginAccountRequest
 import com.example.data.requests.RegisterAccountRequest
 import com.example.data.responses.AuthResponse
 import com.example.data.responses.BasicApiResponse
+import com.example.service.NotificationService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
 import com.example.util.validation.ValidationEvent
@@ -18,7 +19,8 @@ import io.ktor.routing.*
 import java.util.*
 
 fun Route.registerUser(
-    userService: UserService
+    userService: UserService,
+    notificationService: NotificationService
 ) {
 
     route("/api/user/create") {
@@ -45,6 +47,13 @@ fun Route.registerUser(
 
                 is ValidationEvent.Success -> {
                     userService.createUser(request)
+
+                    val user = userService.getUserByEmail(request.email)
+
+                    if(user != null){
+                        notificationService.createNotificationCount(user.id)
+                    }
+
                     call.respond(
                         HttpStatusCode.OK,
                         BasicApiResponse<Unit>(successful = true)

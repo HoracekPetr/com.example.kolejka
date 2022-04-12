@@ -85,6 +85,10 @@ class NotificationService(
         )
     }
 
+    suspend fun createNotificationCount(userId: String): Boolean {
+        return notificationRepository.createNotificationCount(NotificationCount(userId = userId, count = 0))
+    }
+
     suspend fun getNotificationCount(userId: String): Int = notificationRepository.getNotificationCount(userId)
 
     suspend fun updateNotificationCount(postId: String): Boolean {
