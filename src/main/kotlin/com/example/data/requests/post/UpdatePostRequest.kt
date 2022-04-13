@@ -1,4 +1,4 @@
-package com.example.data.requests
+package com.example.data.requests.post
 
 data class UpdatePostRequest(
     val postId: String,

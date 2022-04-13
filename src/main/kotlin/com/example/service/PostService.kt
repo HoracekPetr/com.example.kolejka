@@ -2,9 +2,8 @@ package com.example.service
 
 import com.example.data.models.Post
 import com.example.data.repositories.post.PostRepository
-import com.example.data.requests.CreatePostRequest
-import com.example.data.requests.NewPostRequest
-import com.example.data.requests.UpdatePostRequest
+import com.example.data.requests.post.NewPostRequest
+import com.example.data.requests.post.UpdatePostRequest
 import com.example.util.Constants.DESC_MAX_CHARS
 import com.example.util.Constants.TITLE_MAX_CHARS
 import com.example.util.validation.EditPostValidation

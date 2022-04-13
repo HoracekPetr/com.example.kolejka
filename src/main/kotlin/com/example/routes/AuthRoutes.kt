@@ -2,8 +2,8 @@ package com.example.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.data.requests.LoginAccountRequest
-import com.example.data.requests.RegisterAccountRequest
+import com.example.data.requests.auth.LoginAccountRequest
+import com.example.data.requests.auth.RegisterAccountRequest
 import com.example.data.responses.AuthResponse
 import com.example.data.responses.BasicApiResponse
 import com.example.service.NotificationService

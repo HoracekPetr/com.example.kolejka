@@ -1,6 +1,6 @@
 package com.example.routes
 
-import com.example.data.requests.CreateCommentRequest
+import com.example.data.requests.comment.CreateCommentRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.service.CommentService
 import com.example.service.NotificationService

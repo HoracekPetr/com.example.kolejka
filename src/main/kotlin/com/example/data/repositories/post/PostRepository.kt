@@ -1,7 +1,7 @@
 package com.example.data.repositories.post
 
 import com.example.data.models.Post
-import com.example.data.requests.UpdatePostRequest
+import com.example.data.requests.post.UpdatePostRequest
 import com.example.util.Constants.POSTS_PAGE_SIZE
 
 interface PostRepository {

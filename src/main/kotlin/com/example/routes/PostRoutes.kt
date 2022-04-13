@@ -1,9 +1,8 @@
 package com.example.routes
 
-import com.example.data.requests.AddMemberRequest
-import com.example.data.requests.CreatePostRequest
-import com.example.data.requests.NewPostRequest
-import com.example.data.requests.UpdatePostRequest
+import com.example.data.requests.post.AddMemberRequest
+import com.example.data.requests.post.NewPostRequest
+import com.example.data.requests.post.UpdatePostRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.data.responses.PostDetailResponse
 import com.example.data.util.PostType
@@ -17,21 +16,15 @@ import com.example.util.ApiResponseMessages.LIMIT_CANT_BE_LOWER
 import com.example.util.ApiResponseMessages.POST_NOT_FOUND
 import com.example.util.ApiResponseMessages.TITLE_TOO_LONG
 import com.example.util.Constants
-import com.example.util.Constants.BASE_URL
-import com.example.util.Constants.POST_PIC_PATH
 import com.example.util.QueryParameters
 import com.example.util.QueryParameters.POST_ID
 import com.example.util.validation.EditPostValidation
-import com.google.gson.Gson
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import org.koin.ktor.ext.inject
-import java.io.File
 
 
 fun Route.createNewPost(

@@ -1,4 +1,4 @@
-package com.example.data.requests
+package com.example.data.requests.comment
 
 data class CreateCommentRequest(
     val comment: String,

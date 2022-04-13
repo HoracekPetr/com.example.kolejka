@@ -2,7 +2,7 @@ package com.example.data.repositories.post
 
 import com.example.data.models.Post
 import com.example.data.models.User
-import com.example.data.requests.UpdatePostRequest
+import com.example.data.requests.post.UpdatePostRequest
 import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
 

@@ -2,8 +2,12 @@ package com.example.service
 
 import com.example.data.models.User
 import com.example.data.repositories.user.UserRepository
-import com.example.data.requests.*
+import com.example.data.requests.auth.ChangePasswordRequest
+import com.example.data.requests.auth.LoginAccountRequest
+import com.example.data.requests.auth.RegisterAccountRequest
+import com.example.data.requests.user.UpdateUserRequest
 import com.example.data.responses.ProfileResponse
+import com.example.data.util.AccessRights
 import com.example.security.getHashWithSalt
 import com.example.util.Constants.DEFAULT_AVATAR_URL
 import com.example.util.validation.ValidationEvent
@@ -36,6 +40,10 @@ class UserService(
         return userRepository.getUserProfileUrl(userId)
     }
 
+    suspend fun getUserById(userId: String): User? {
+        return userRepository.getUserById(userId)
+    }
+
     suspend fun getUserProfile(userId: String): ProfileResponse? {
 
         val user = userRepository.getUserById(userId) ?: return null
@@ -60,7 +68,8 @@ class UserService(
                 email = request.email,
                 username = request.username,
                 password = getHashWithSalt(request.password),
-                profilePictureURL = DEFAULT_AVATAR_URL
+                profilePictureURL = DEFAULT_AVATAR_URL,
+                accessRights = AccessRights.Regular.type
             )
         )
     }

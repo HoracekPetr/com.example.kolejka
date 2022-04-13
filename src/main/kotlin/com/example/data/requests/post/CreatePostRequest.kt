@@ -1,4 +1,4 @@
-package com.example.data.requests
+package com.example.data.requests.post
 
 data class CreatePostRequest(
     val title: String,

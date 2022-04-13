@@ -1,4 +1,4 @@
-package com.example.data.requests
+package com.example.data.requests.user
 
 data class UpdateUserRequest(
     val username: String,

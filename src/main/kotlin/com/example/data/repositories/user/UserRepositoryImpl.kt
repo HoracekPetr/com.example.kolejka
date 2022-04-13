@@ -1,12 +1,9 @@
 package com.example.data.repositories.user
 
 import com.example.data.models.User
-import com.example.data.requests.ChangePasswordRequest
-import com.example.data.requests.UpdateProfileRequest
-import com.example.data.requests.UpdateUserRequest
+import com.example.data.requests.user.UpdateUserRequest
 import com.example.security.checkHashForPassword
 import com.example.security.getHashWithSalt
-import org.litote.kmongo.SetTo
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
 import org.litote.kmongo.setValue
@@ -49,7 +46,8 @@ class UserRepositoryImpl(
                 bannerR = updateProfileRequest.bannerR,
                 bannerG = updateProfileRequest.bannerG,
                 bannerB = updateProfileRequest.bannerB,
-                id = user.id
+                id = user.id,
+                accessRights = user.accessRights
             )
         ).wasAcknowledged()
     }

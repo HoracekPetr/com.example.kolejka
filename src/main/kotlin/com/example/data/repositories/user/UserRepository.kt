@@ -1,9 +1,7 @@
 package com.example.data.repositories.user
 
 import com.example.data.models.User
-import com.example.data.requests.ChangePasswordRequest
-import com.example.data.requests.UpdateProfileRequest
-import com.example.data.requests.UpdateUserRequest
+import com.example.data.requests.user.UpdateUserRequest
 
 interface UserRepository {
 

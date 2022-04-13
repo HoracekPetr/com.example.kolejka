@@ -2,7 +2,7 @@ package com.example.service
 
 import com.example.data.models.Comment
 import com.example.data.repositories.comment.CommentRepository
-import com.example.data.requests.CreateCommentRequest
+import com.example.data.requests.comment.CreateCommentRequest
 import com.example.util.validation.CommentValidationEvent
 import com.example.util.Constants
 

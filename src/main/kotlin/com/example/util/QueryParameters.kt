@@ -8,4 +8,5 @@ object QueryParameters {
     const val POST_ID = "postId"
     const val EMAIL = "email"
     const val COMMENT_ID = "commentId"
+    const val ID = "id"
 }
