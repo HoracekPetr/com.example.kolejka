@@ -138,13 +138,13 @@ fun Route.getNews(
 
                 if(news.isEmpty()){
                     call.respond(
-                        HttpStatusCode.OK, BasicApiResponse<Unit>(successful = false, message = ApiResponseMessages.NEWS_NOT_FOUND)
+                        OK, BasicApiResponse<Unit>(successful = false, message = ApiResponseMessages.NEWS_NOT_FOUND)
                     )
                     return@get
                 }
 
                 call.respond(
-                    HttpStatusCode.OK, BasicApiResponse(successful = true, data = news)
+                    OK, BasicApiResponse(successful = true, data = news)
                 )
             }
         }
@@ -172,7 +172,7 @@ fun Route.getNewsById(
                 }
 
                 news.let {
-                    call.respond(OK, BasicApiResponse<News>(successful = true, data = it))
+                    call.respond(OK, BasicApiResponse(successful = true, data = it))
                 }
             }
         }
