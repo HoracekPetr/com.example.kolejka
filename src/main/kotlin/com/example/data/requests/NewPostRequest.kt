@@ -7,5 +7,6 @@ data class NewPostRequest(
     val type: Int,
     val date: String,
     val location: String,
+    val price: Int?,
     val postImageURL: String
 )

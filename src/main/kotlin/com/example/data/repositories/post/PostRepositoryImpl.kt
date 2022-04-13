@@ -49,7 +49,8 @@ class PostRepositoryImpl(
                 userId = post.userId,
                 available = post.available + ((updatePostRequest.limit ?: 0) - (post.limit ?: 0)),
                 type = post.type,
-                timestamp = post.timestamp
+                timestamp = post.timestamp,
+                price = updatePostRequest.price
             )
         ).wasAcknowledged()
     }

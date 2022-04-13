@@ -18,5 +18,6 @@ data class Post(
     val profilePictureUrl: String?,
     val date: String?,
     val location: String?,
-    val timestamp: Long
+    val timestamp: Long,
+    val price: Int?
 )

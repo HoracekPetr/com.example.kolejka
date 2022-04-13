@@ -7,5 +7,6 @@ data class UpdatePostRequest(
     val limit: Int?,
     val date: String,
     val location: String,
+    val price: Int?,
     val postPictureUrl: String?
 )

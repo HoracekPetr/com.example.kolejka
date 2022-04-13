@@ -28,6 +28,7 @@ class PostService(
                 profilePictureUrl = profilePictureUrl,
                 date = request.date,
                 location = request.location,
+                price = request.price ?: 0,
                 timestamp = System.currentTimeMillis()
             )
         )
