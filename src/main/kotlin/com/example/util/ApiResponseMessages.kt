@@ -12,4 +12,5 @@ object ApiResponseMessages {
     const val POST_NOT_FOUND = "The post doesn't exist."
     const val COMMENTS_NOT_FOUND = "Comments were not found."
     const val LIMIT_CANT_BE_LOWER = "Limit cannot be lower than member count!"
+    const val NEWS_NOT_FOUND = "No news were found."
 }

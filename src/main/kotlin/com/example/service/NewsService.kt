@@ -35,4 +35,6 @@ class NewsService(
     suspend fun deleteNews(newsId: String) = newsRepository.deleteNews(newsId)
 
     suspend fun getNews(page: Int, pageSize: Int) = newsRepository.getNews(page, pageSize)
+
+    suspend fun getNewsById(newsId: String) = newsRepository.getNewsById(newsId)
 }

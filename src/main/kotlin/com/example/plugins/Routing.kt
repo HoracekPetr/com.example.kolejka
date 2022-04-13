@@ -68,6 +68,7 @@ fun Application.configureRouting() {
         createNews(userService, newsService)
         deleteNews(userService, newsService)
         getNews(newsService)
+        getNewsById(newsService)
 
         //Static Routes
         static {

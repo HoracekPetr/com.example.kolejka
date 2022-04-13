@@ -25,4 +25,8 @@ class NewsRepositoryImpl(
             .descendingSort(News::timestamp)
             .toList()
     }
+
+    override suspend fun getNewsById(newsId: String): News? {
+        return newsCollection.findOneById(newsId)
+    }
 }

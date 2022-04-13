@@ -7,6 +7,7 @@ import com.example.data.util.AccessRights
 import com.example.service.NewsService
 import com.example.service.UserService
 import com.example.util.ApiResponseMessages
+import com.example.util.ApiResponseMessages.NEWS_NOT_FOUND
 import com.example.util.ApiResponseMessages.USER_NOT_FOUND
 import com.example.util.Constants
 import com.example.util.QueryParameters
@@ -14,6 +15,7 @@ import com.example.util.validation.CreateNewsValidation
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.http.HttpStatusCode.Companion.OK
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -133,9 +135,45 @@ fun Route.getNews(
                     call.parameters[QueryParameters.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.POSTS_PAGE_SIZE
 
                 val news = newsService.getNews(page, pageSize)
+
+                if(news.isEmpty()){
+                    call.respond(
+                        HttpStatusCode.OK, BasicApiResponse<Unit>(successful = false, message = ApiResponseMessages.NEWS_NOT_FOUND)
+                    )
+                    return@get
+                }
+
                 call.respond(
                     HttpStatusCode.OK, BasicApiResponse(successful = true, data = news)
                 )
+            }
+        }
+    }
+}
+
+fun Route.getNewsById(
+    newsService: NewsService
+){
+    authenticate{
+        route("/api/news/get/{id}"){
+            get {
+                val newsId = call.parameters[QueryParameters.ID] ?: kotlin.run {
+                    call.respond(
+                        HttpStatusCode.BadRequest
+                    )
+                    return@get
+                }
+
+                val news = newsService.getNewsById(newsId)
+
+                if(news == null){
+                    call.respond(OK, BasicApiResponse<Unit>(successful = false, message = NEWS_NOT_FOUND))
+                    return@get
+                }
+
+                news.let {
+                    call.respond(OK, BasicApiResponse<News>(successful = true, data = it))
+                }
             }
         }
     }

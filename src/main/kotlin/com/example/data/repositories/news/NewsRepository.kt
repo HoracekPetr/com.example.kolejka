@@ -14,4 +14,8 @@ interface NewsRepository {
         pageSize: Int = Constants.POSTS_PAGE_SIZE
     ): List<News>
 
+    suspend fun getNewsById(
+        newsId: String
+    ): News?
+
 }
