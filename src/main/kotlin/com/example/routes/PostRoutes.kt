@@ -52,12 +52,6 @@ fun Route.createNewPost(
                 )
 
                 if(newPost){
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BasicApiResponse<Unit>(
-                            successful = true
-                        )
-                    )
 
                     pushNotificationService.sendPushNotification(
                         pushNotification = PushNotification(
@@ -67,6 +61,13 @@ fun Route.createNewPost(
                             appId = OneSignalObjects.APP_ID
                         ),
                         apiKey = apiKey
+                    )
+
+                    call.respond(
+                        HttpStatusCode.OK,
+                        BasicApiResponse<Unit>(
+                            successful = true
+                        )
                     )
 
                 } else {
