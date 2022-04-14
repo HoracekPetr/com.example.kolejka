@@ -55,7 +55,7 @@ fun Route.createNewPost(
 
                     pushNotificationService.sendPushNotification(
                         pushNotification = PushNotification(
-                            includedSegments = listOf("All"),
+                            includedSegments = listOf("Subscribed Users"),
                             heading = PushNotificationMessage(en = "Kolejka"),
                             contents = PushNotificationMessage(en = "There is a new post!"),
                             appId = OneSignalObjects.APP_ID
