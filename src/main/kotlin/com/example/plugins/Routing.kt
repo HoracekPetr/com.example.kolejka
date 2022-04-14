@@ -9,6 +9,9 @@ import com.example.routes.*
 import com.example.service.*
 import io.ktor.routing.*
 import io.ktor.application.*
+import io.ktor.client.*
+import io.ktor.features.*
+import io.ktor.gson.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.response.*
@@ -28,6 +31,12 @@ fun Application.configureRouting() {
     val pushNotificationService: PushNotificationService by inject()
 
     val apiKey = environment.config.property("onesignal.api_key").getString()
+
+    val client = HttpClient{
+        install(ContentNegotiation){
+            gson()
+        }
+    }
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
@@ -53,7 +62,7 @@ fun Application.configureRouting() {
         getUserId(userService)
 
         //Post Routes
-        createNewPost(postService, userService, pushNotificationService, apiKey)
+        createNewPost(postService, userService, pushNotificationService, apiKey, client)
 
         getPostById(postService)
         getPostsByAll(postService)

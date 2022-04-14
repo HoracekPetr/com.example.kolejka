@@ -9,9 +9,7 @@ import io.ktor.http.*
 
 class PushNotificationRepositoryImpl: PushNotificationRepository {
 
-    override suspend fun sendPushNotification(pushNotification: PushNotification, apiKey: String): Boolean {
-
-        val client = HttpClient()
+    override suspend fun sendPushNotification(pushNotification: PushNotification, client: HttpClient, apiKey: String): Boolean {
 
         return try {
             client.post<String>{

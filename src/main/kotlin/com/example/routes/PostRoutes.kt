@@ -21,6 +21,7 @@ import com.example.util.QueryParameters.POST_ID
 import com.example.util.validation.EditPostValidation
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.client.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -31,10 +32,11 @@ fun Route.createNewPost(
     postService: PostService,
     userService: UserService,
     pushNotificationService: PushNotificationService,
-    apiKey: String
+    apiKey: String,
+    client: HttpClient
 ) {
     authenticate {
-        route("/api/post/new"){
+        route("/api/post/new") {
             post {
                 val request = call.receiveOrNull<NewPostRequest>() ?: kotlin.run {
                     call.respond(HttpStatusCode.BadRequest)
@@ -51,7 +53,7 @@ fun Route.createNewPost(
                     profilePictureUrl = profilePictureUrl ?: ""
                 )
 
-                if(newPost){
+                if (newPost) {
 
                     pushNotificationService.sendPushNotification(
                         pushNotification = PushNotification(
@@ -60,8 +62,10 @@ fun Route.createNewPost(
                             contents = PushNotificationMessage(en = "There is a new post!"),
                             appId = OneSignalObjects.APP_ID
                         ),
+                        client = client,
                         apiKey = apiKey
                     )
+
 
                     call.respond(
                         HttpStatusCode.OK,
@@ -137,22 +141,22 @@ fun Route.getPostById(
 fun Route.editPostInfo(
     postService: PostService
 ) {
-    authenticate{
-        route("/api/post/edit"){
+    authenticate {
+        route("/api/post/edit") {
             put {
                 val request = call.receiveOrNull<UpdatePostRequest>() ?: kotlin.run {
                     call.respond(HttpStatusCode.BadRequest)
                     return@put
                 }
 
-                if(call.userId != postService.getPostById(request.postId)?.userId){
+                if (call.userId != postService.getPostById(request.postId)?.userId) {
                     call.respond(
                         HttpStatusCode.Forbidden,
                         BasicApiResponse<Unit>(successful = false)
                     )
                 }
 
-                when(postService.editPostInfo(request)){
+                when (postService.editPostInfo(request)) {
                     is EditPostValidation.EmptyFieldError -> {
                         call.respond(
                             HttpStatusCode.OK,
@@ -325,7 +329,7 @@ fun Route.addPostMember(
 
                 if (post != null) {
                     if (!postService.isPostMember(request.postId ?: "", call.userId)) {
-                        if(post.available == 0){
+                        if (post.available == 0) {
                             call.respond(
                                 HttpStatusCode.Forbidden,
                                 BasicApiResponse<Unit>(
@@ -365,7 +369,11 @@ fun Route.addPostMember(
                                 )
                             )
                         }
-                    } else if (postService.isPostMember(request.postId ?: "", call.userId) && post.userId == call.userId) {
+                    } else if (postService.isPostMember(
+                            request.postId ?: "",
+                            call.userId
+                        ) && post.userId == call.userId
+                    ) {
                         call.respond(
                             HttpStatusCode.Conflict,
                             BasicApiResponse<Unit>(
@@ -373,8 +381,7 @@ fun Route.addPostMember(
                                 successful = false
                             )
                         )
-                    }
-                    else {
+                    } else {
 
                         postService.removePostMember(request.postId ?: "", call.userId)
                         commentService.deleteCommentsFromUser(postId = post.id, userId = call.userId)
