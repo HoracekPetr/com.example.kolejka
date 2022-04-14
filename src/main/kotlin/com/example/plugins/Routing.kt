@@ -55,8 +55,11 @@ fun Application.configureRouting(client: HttpClient) {
         changeUserPassword(userService)
         getUserId(userService)
 
+        //Push
+        sendPushNotification(pushNotificationService, apiKey, client)
+
         //Post Routes
-        createNewPost(postService, userService, pushNotificationService, apiKey, client)
+        createNewPost(postService, userService)
 
         getPostById(postService)
         getPostsByAll(postService)

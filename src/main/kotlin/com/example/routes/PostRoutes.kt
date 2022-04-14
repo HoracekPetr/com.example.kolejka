@@ -28,12 +28,36 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 
-fun Route.createNewPost(
-    postService: PostService,
-    userService: UserService,
+fun Route.sendPushNotification(
     pushNotificationService: PushNotificationService,
     apiKey: String,
     client: HttpClient
+){
+    route("/api/push/sent"){
+        post{
+            val notification = pushNotificationService.sendPushNotification(
+                pushNotification = PushNotification(
+                    includedSegments = listOf("Subscribed Users"),
+                    heading = PushNotificationMessage(en = "Kolejka"),
+                    contents = PushNotificationMessage(en = "There is a new post!"),
+                    appId = OneSignalObjects.APP_ID
+                ),
+                client = client,
+                apiKey = apiKey
+            )
+
+            if(notification){
+                call.respond(HttpStatusCode.OK)
+            } else {
+                call.respond(HttpStatusCode.BadRequest)
+            }
+        }
+    }
+}
+
+fun Route.createNewPost(
+    postService: PostService,
+    userService: UserService,
 ) {
     authenticate {
         route("/api/post/new") {
@@ -54,18 +78,6 @@ fun Route.createNewPost(
                 )
 
                 if (newPost) {
-
-                    pushNotificationService.sendPushNotification(
-                        pushNotification = PushNotification(
-                            includedSegments = listOf("Subscribed Users"),
-                            heading = PushNotificationMessage(en = "Kolejka"),
-                            contents = PushNotificationMessage(en = "There is a new post!"),
-                            appId = OneSignalObjects.APP_ID
-                        ),
-                        client = client,
-                        apiKey = apiKey
-                    )
-
 
                     call.respond(
                         HttpStatusCode.OK,
