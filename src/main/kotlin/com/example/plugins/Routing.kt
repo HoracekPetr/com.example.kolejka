@@ -18,7 +18,7 @@ import io.ktor.response.*
 import org.koin.ktor.ext.get
 import org.koin.ktor.ext.inject
 
-fun Application.configureRouting() {
+fun Application.configureRouting(client: HttpClient) {
 
     //val userRepository: UserRepository by inject()
     //val postRepository: PostRepository by inject()
@@ -31,12 +31,6 @@ fun Application.configureRouting() {
     val pushNotificationService: PushNotificationService by inject()
 
     val apiKey = environment.config.property("onesignal.api_key").getString()
-
-    val client = HttpClient{
-        install(ContentNegotiation){
-            gson()
-        }
-    }
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
