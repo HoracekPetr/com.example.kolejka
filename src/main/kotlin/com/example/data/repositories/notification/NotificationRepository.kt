@@ -2,6 +2,7 @@ package com.example.data.repositories.notification
 
 import com.example.data.models.Notification
 import com.example.data.models.NotificationCount
+import com.example.data.models.push_notification.PushNotification
 import com.example.data.responses.NotificationResponse
 import com.example.util.Constants
 
@@ -28,4 +29,5 @@ interface NotificationRepository {
     suspend fun getNotificationCount(userId: String): Int
 
     suspend fun updateNotificationInfo(userId: String): Boolean
+
 }

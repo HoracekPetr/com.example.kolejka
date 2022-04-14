@@ -8,11 +8,17 @@ import com.example.data.repositories.notification.NotificationRepository
 import com.example.data.repositories.notification.NotificationRepositoryImpl
 import com.example.data.repositories.post.PostRepository
 import com.example.data.repositories.post.PostRepositoryImpl
+import com.example.data.repositories.push_notifications.PushNotificationRepository
+import com.example.data.repositories.push_notifications.PushNotificationRepositoryImpl
 import com.example.data.repositories.user.UserRepository
 import com.example.data.repositories.user.UserRepositoryImpl
 import com.example.service.*
 import com.example.util.Constants.DATABASE_NAME
 import com.google.gson.Gson
+import io.ktor.client.*
+import io.ktor.client.engine.*
+import io.ktor.features.*
+import io.ktor.http.cio.*
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
@@ -40,6 +46,10 @@ val mainModule = module {
         NotificationRepositoryImpl(get())
     }
 
+    single<PushNotificationRepository>{
+        PushNotificationRepositoryImpl()
+    }
+
     single <NewsRepository>{
         NewsRepositoryImpl(get())
     }
@@ -62,6 +72,10 @@ val mainModule = module {
 
     single {
         NewsService(get())
+    }
+
+    single {
+        PushNotificationService(get())
     }
 
     single{

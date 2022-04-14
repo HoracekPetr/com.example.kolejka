@@ -3,6 +3,9 @@ package com.example
 import com.example.di.mainModule
 import io.ktor.application.*
 import com.example.plugins.*
+import io.ktor.client.*
+import io.ktor.features.*
+import io.ktor.gson.*
 import org.koin.ktor.ext.Koin
 import org.koin.ktor.ext.modules
 import org.koin.logger.SLF4JLogger
@@ -20,4 +23,5 @@ fun Application.module() {
     configureSerialization()
     configureMonitoring()
     configureHTTP()
+
 }

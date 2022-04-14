@@ -1,13 +1,19 @@
 package com.example.data.repositories.notification
 
 import com.example.data.models.*
+import com.example.data.models.push_notification.PushNotification
 import com.example.data.responses.NotificationResponse
+import com.example.data.util.OneSignalObjects
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import org.litote.kmongo.*
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.insertOne
+import java.lang.Exception
 
 class NotificationRepositoryImpl(
-    db: CoroutineDatabase
+    db: CoroutineDatabase,
 ) : NotificationRepository {
 
     private val notifications = db.getCollection<Notification>()
@@ -93,4 +99,5 @@ class NotificationRepositoryImpl(
             )
         ).wasAcknowledged()
     }
+
 }

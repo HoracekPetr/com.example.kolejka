@@ -1,15 +1,15 @@
 package com.example.routes
 
+import com.example.data.models.push_notification.PushNotification
+import com.example.data.models.push_notification.PushNotificationMessage
 import com.example.data.requests.post.AddMemberRequest
 import com.example.data.requests.post.NewPostRequest
 import com.example.data.requests.post.UpdatePostRequest
 import com.example.data.responses.BasicApiResponse
 import com.example.data.responses.PostDetailResponse
+import com.example.data.util.OneSignalObjects
 import com.example.data.util.PostType
-import com.example.service.CommentService
-import com.example.service.NotificationService
-import com.example.service.PostService
-import com.example.service.UserService
+import com.example.service.*
 import com.example.util.ApiResponseMessages.DESC_TOO_LONG
 import com.example.util.ApiResponseMessages.FIELDS_BLANK
 import com.example.util.ApiResponseMessages.LIMIT_CANT_BE_LOWER
@@ -30,6 +30,8 @@ import io.ktor.routing.*
 fun Route.createNewPost(
     postService: PostService,
     userService: UserService,
+    pushNotificationService: PushNotificationService,
+    apiKey: String
 ) {
     authenticate {
         route("/api/post/new"){
@@ -56,6 +58,17 @@ fun Route.createNewPost(
                             successful = true
                         )
                     )
+
+                    pushNotificationService.sendPushNotification(
+                        pushNotification = PushNotification(
+                            includedSegments = listOf("All"),
+                            heading = PushNotificationMessage(en = "Kolejka"),
+                            contents = PushNotificationMessage(en = "There is a new post!"),
+                            appId = OneSignalObjects.APP_ID
+                        ),
+                        apiKey = apiKey
+                    )
+
                 } else {
                     call.respond(
                         HttpStatusCode.BadRequest,

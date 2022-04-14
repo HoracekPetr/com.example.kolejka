@@ -1,10 +1,18 @@
 package com.example.plugins
 
+import com.example.data.models.push_notification.PushNotification
+import com.example.data.models.push_notification.PushNotificationMessage
+import com.example.data.repositories.push_notifications.PushNotificationRepository
+import com.example.data.repositories.push_notifications.PushNotificationRepositoryImpl
+import com.example.data.util.OneSignalObjects
 import com.example.routes.*
 import com.example.service.*
 import io.ktor.routing.*
 import io.ktor.application.*
+import io.ktor.http.*
 import io.ktor.http.content.*
+import io.ktor.response.*
+import org.koin.ktor.ext.get
 import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
@@ -17,6 +25,9 @@ fun Application.configureRouting() {
     val commentService: CommentService by inject()
     val notificationService: NotificationService by inject()
     val newsService: NewsService by inject()
+    val pushNotificationService: PushNotificationService by inject()
+
+    val apiKey = environment.config.property("onesignal.api_key").getString()
 
     val jwtIssuer = environment.config.property("jwt.domain").getString()
     val jwtAudience = environment.config.property("jwt.audience").getString()
@@ -42,7 +53,7 @@ fun Application.configureRouting() {
         getUserId(userService)
 
         //Post Routes
-        createNewPost(postService, userService)
+        createNewPost(postService, userService, pushNotificationService, apiKey)
 
         getPostById(postService)
         getPostsByAll(postService)
@@ -69,6 +80,7 @@ fun Application.configureRouting() {
         deleteNews(userService, newsService)
         getNews(newsService)
         getNewsById(newsService)
+
 
         //Static Routes
         static {
